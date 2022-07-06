@@ -14,14 +14,14 @@ scores = as.data.frame(table(d[,p], d.m[,i]))
 scores$p1 = round(p1, 3)
 scores$p2 = round(p2, 3)
 #scores$score = log(p1/p2)
-scores$score = log((p1+0.001)/(p2+0.005))
+scores$score = log((p1+0.0001)/(p2+0.0005))
 #scores$score = log((p1+0.001)/(p2+0.005))
 #scores$score[scores$score==-Inf]<-0 # the ones were p1 = 0, because ln(0) = -Inf. There is no resistance
 #scores$score[scores$score== Inf]<-NA # the ones were p2 = 0, because 1/0 = Inf. There are no negatives in the samples.
 
 score=scores$score
 names(score) = scores$Var1
-plot(score)
+# plot(score)
 
 ncolors= 5
 x.vector=score[score>0]
