@@ -1,5 +1,8 @@
 # Requires: i = "family of antibiotics" , p = "predictor = country", and data.frame d
 # libraries: rgdal, sp, sf
+p = p
+d = d
+i = i
 
 N = as.data.frame(table(d[,p], d.m[,i]))
 names(N) = c("j", "i", "N")
