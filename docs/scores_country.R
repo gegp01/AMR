@@ -30,7 +30,7 @@ names(mypal) = names(x.vector)
 
 par(mai=c(0,0,1,0))
 plot(land, col=mypal[land@data$ADMIN])
-legend("top", cex=0.7, box.col = "azure", bg="azure", horiz = T, inset = 0.13
+legend("top", cex=0.7, box.col = "azure", bg="azure", horiz = T, inset = 0.05
        , title=paste("Resistance to", i, "(scores > 0)")
        , legend=round(c(quantile(x.vector, probs= (1:5)/5)), 2), fill = my_palette)
 }
