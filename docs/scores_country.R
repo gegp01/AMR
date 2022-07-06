@@ -11,8 +11,9 @@ f.plot.scores = function(x){
        N = as.data.frame(table(d[,p], d.m[,i]))
        names(N) = c("j", "i", "N")
 
-       p1 = N$N[N$i == 1]/sum(N$N[N$i == 1])
-       p2 = N$N[N$i == 0]/sum(N$N[N$i == 0])
+  #  Likelihoods
+       p1 = N$N[N$i == 1]/sum(N$N[N$i == 1]) #  P(S_j | R_i)
+       p2 = N$N[N$i == 0]/sum(N$N[N$i == 0]) #  P(S_j | R_noi)
 
 scores = as.data.frame(table(d[,p], d.m[,i]))
 scores$p1 = round(p1, 3)
