@@ -22,7 +22,7 @@ f.plot.scores = function(x){
 scores = as.data.frame(table(d[,p], d.m[,i]))
 scores$p1 = round(p1, 3)
 scores$p2 = round(p2, 3)
-scores$score = log((p1+0.0001)/(p2+0.0005)) + log((prior1+0.0001)/(prior2+0.0005))
+scores$score = log((p1+0.0001)/(p2+0.0005)) + log(prior1/prior2)
 
 score=scores$score
 names(score) = scores$Var1
