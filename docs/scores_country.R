@@ -18,8 +18,8 @@ f.plot.scores = function(x){
       prior2 = sum(N$N[N$i == 0]) / sum(N$N) # P(R_noi)
   
       scores = as.data.frame(table(d[,p], d.m[,i]))
-      scores$p1 = round(p1, 3)
-      scores$p2 = round(p2, 3)
+      scores$p1 = round(p1, 5)
+      scores$p2 = round(p2, 5)
       scores$score = log((p1+0.0001)/(p2+0.0005))+log(prior1/prior2)
       #scores$score = log(((p1+0.0001)/(p2+0.0005)))
 
