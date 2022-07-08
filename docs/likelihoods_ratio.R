@@ -36,5 +36,5 @@ f.plot.likelihood = function(x){
       legend("top", cex=0.7, box.col = "azure", bg="azure", horiz = T, inset = 0
        , title=paste("Resistance to", i, "(ln likelihoods ratio > 0)")
        , legend=round(c(quantile(x.vector, probs= (1:5)/5)), 2), fill = my_palette)
-      legend("bottom", legend = paste("P(R_i) = ", round(prior1, 3), "; P(R_noi) = ", round(prior2, 3)))
+      legend("bottom", legend = paste("P(R_i) = ", round(prior1, 5), "; P(R_noi) = ", round(prior2, 5)))
                          }
