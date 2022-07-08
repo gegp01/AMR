@@ -4,7 +4,7 @@
 #d = d
 #i = i
 
-f.plot.scores = function(x){
+f.plot.likelihood = function(x){
       i = names(d.m)[x] # variable 1
       N = as.data.frame(table(d[,p], d.m[,i]))
       names(N) = c("j", "i", "N")
