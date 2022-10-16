@@ -1,1 +1,1 @@
-## Public repository with functions for analyzing the distribution of antibiotic resistance.
+### Functions for analyzing distributions of antibiotic resistance.
