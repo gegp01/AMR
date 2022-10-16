@@ -20,7 +20,9 @@ land = readOGR("https://gegp01.github.io/ServSoc/countries.geojson")
 
 # 2.1 Read species phylogeny
 require(ape)
-V = read.tree("https://gegp01.github.io/AMR/")
+V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
+nms_tree = V$tip.label
 
 
-
+# 3. SELECT DATA FOR SPECIES WITH MORE THAN 600 samples.
+# Check script bath.R
