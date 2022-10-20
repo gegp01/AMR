@@ -23,6 +23,31 @@ require(ape)
 V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
 nms_tree = V$tip.label
 
+# ANALYSIS of species with more than 600 samples.
+# Select species for which we have 600 samples.
 
-# 3. SELECT DATA FOR SPECIES WITH MORE THAN 600 samples.
-# Check script bath.R
+# SUBSET OF SPECIES WITH AT LEAST 600 SAMPLES.
+d.back = D # Make a back up of the original data.
+
+D = D[is.na(d$year)==F,] # Eliminate data without year
+
+X = table(d$species)
+taxa = names(X[X>=600]) # select taxa
+
+d.600 = d[is.na(match(d$species, taxa))==F,]
+names(d.600)[names(d.600)=="amino"]<-"aminoglycoside" # change name of this family of antibiotics
+
+# Names of the antibiotics
+antibiotics = c("aminoglycoside", "betalactamics", "colistin", "fosfomycin", "glycopeptide", "macrolide"
+                , "oxazolidinone", "phenicol", "quinolone", "rifampicin", "sulfo0mide", "tetracycline", "trimethoprim")
+
+# SUBSET OF CURRENT TIMES (las 10 years)
+d.600.current = d.600[d.600$year>=2010,]
+
+# WORKING DATASET
+D = d.600.current
+
+########################################
+
+
+
