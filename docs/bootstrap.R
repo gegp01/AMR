@@ -31,23 +31,36 @@ d.back = D # Make a back up of the original data.
 
 D = D[is.na(d$year)==F,] # Eliminate data without year
 
-X = table(d$species)
-taxa = names(X[X>=600]) # select taxa
 
-d.600 = d[is.na(match(d$species, taxa))==F,]
-names(d.600)[names(d.600)=="amino"]<-"aminoglycoside" # change name of this family of antibiotics
+# SUBSET MAKER
+
+# 1. DETERMINE MINIMUM NUMBER OF SAMPLES PER SPECIES
+min.sample = 600
+
+# DEFINE TIME WINDOW (YEAR)
+year.start = 2010
+year.end = 2022
+
+
+#############################################
+# SUBSET DATASET BASED ON SAMPLE SIZE
+X = table(d$species)
+taxa = names(X[X>=min.sample) # select taxa
+
+d.sample = d[is.na(match(d$species, taxa))==F,]
+names(d.sample)[names(d.sample)=="amino"]<-"aminoglycoside" # change name of this family of antibiotics
 
 # Names of the antibiotics
 antibiotics = c("aminoglycoside", "betalactamics", "colistin", "fosfomycin", "glycopeptide", "macrolide"
                 , "oxazolidinone", "phenicol", "quinolone", "rifampicin", "sulfo0mide", "tetracycline", "trimethoprim")
 
 # SUBSET OF CURRENT TIMES (las 10 years)
-d.600.current = d.600[d.600$year>=2010,]
+d.sample.time = d.sample[d.600$year>=year.start,]
 
 # WORKING DATASET
-D = d.600.current
+D = d.sample.time
 
-########################################
+##############################################
 
 
 
