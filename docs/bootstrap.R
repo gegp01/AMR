@@ -23,14 +23,17 @@ require(ape)
 V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
 nms_tree = V$tip.label
 
-# ANALYSIS of species with more than 600 samples.
-# Select species for which we have 600 samples.
 
-# SUBSET OF SPECIES WITH AT LEAST 600 SAMPLES.
+# DATA
 d.back = D # Make a back up of the original data.
-
 D = D[is.na(d$year)==F,] # Eliminate data without year
 
+# Change name of antibiotic family
+names(d.sample)[names(d.sample)=="amino"]<-"aminoglycoside"
+
+# Names of the antibiotics
+antibiotics = c("aminoglycoside", "betalactamics", "colistin", "fosfomycin", "glycopeptide", "macrolide"
+                , "oxazolidinone", "phenicol", "quinolone", "rifampicin", "sulfo0mide", "tetracycline", "trimethoprim")
 
 # SUBSET MAKER
 
@@ -41,26 +44,39 @@ min.sample = 600
 year.start = 2010
 year.end = 2022
 
-
-#############################################
+############################################# INLCUDE THIS IN A FUNCTION
 # SUBSET DATASET BASED ON SAMPLE SIZE
 X = table(d$species)
 taxa = names(X[X>=min.sample) # select taxa
 
 d.sample = d[is.na(match(d$species, taxa))==F,]
-names(d.sample)[names(d.sample)=="amino"]<-"aminoglycoside" # change name of this family of antibiotics
 
-# Names of the antibiotics
-antibiotics = c("aminoglycoside", "betalactamics", "colistin", "fosfomycin", "glycopeptide", "macrolide"
-                , "oxazolidinone", "phenicol", "quinolone", "rifampicin", "sulfo0mide", "tetracycline", "trimethoprim")
 
 # SUBSET OF CURRENT TIMES (las 10 years)
 d.sample.time = d.sample[d.600$year>=year.start,]
 
 # WORKING DATASET
 D = d.sample.time
-
 ##############################################
+##############################################
+t.min = year.start
+s.min = min.sample
+               
+f1 = function(t.min, s.min) {
+  X = table(d$species)
+  taxa = names(X[X>=s.min) # select taxa
+  d.sample = d[is.na(match(d$species, taxa))==F,]
+                 
+  # SUBSET OF CURRENT TIMES (las 10 years)
+  d.sample.time = d.sample[d.sample$year>=t.min,]
+                 
+  # WORKING DATASET
+  D = d.sample.time
+  D
+  }
 
+
+               
+               
 
 
