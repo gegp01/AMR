@@ -80,11 +80,27 @@ f3 = function(x){d.w[d.w$continent==continent[x],]}
 CONT = lapply(1:length(continent), f3)
 
 
-
 # Select countries with a minimum sample size for each of the species
-f.sample = function(x){min(table(CONT[[x]]$specie))>10}
-ok = sapply(1:length(CONT), f.sample)
 
+
+f.sample = function(x){
+  require(ape)
+  Q = table(X[[x]]$specie))>10
+  idx = names(Q[Q==T]) # NAMES OF SPECIES WITH SAMPLE ABOVE N min.
+  q = X[[x]][is.na(match(X[[x]]$species, idx))==F,]
+  nms = unique(q$species) # names of species in the data subset
+  v = keep.tip(V, nms) # phylogeny with species within the data subset
+  # SELECT A RANDOM OBSERVATION WITHIN SAMPLES OF EACH FACTOR LEVEL (species) 
+  #  https://stackoverflow.com/questions/40715863/select-a-random-sample-within-levels-of-a-factor-unequal-stratum-size-per-facto
+  
+  }
+
+V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
+X = C  
+
+
+###################
+ok = sapply(1:length(X), f.sampleX)
 C2 = C[ok]
 f3 = function(x){unique(C2[[x]]$country)}
 sapply(1:17, f3)
