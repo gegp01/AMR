@@ -92,7 +92,12 @@ f.sample = function(x){
   v = keep.tip(V, nms) # phylogeny with species within the data subset
   # SELECT A RANDOM OBSERVATION WITHIN SAMPLES OF EACH FACTOR LEVEL (species) 
   #  https://stackoverflow.com/questions/40715863/select-a-random-sample-within-levels-of-a-factor-unequal-stratum-size-per-facto
-  
+  w = split.data.frame(X[[x]], X[[x]]$specie)
+  fx = function(x){sample(w[[x]]$id, 1)}
+  do.call(fx, w)  ###### IN DEVELOPMENT!
+
+
+
   }
 
 V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
