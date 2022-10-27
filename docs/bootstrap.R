@@ -9,9 +9,9 @@
 # The data subset must contain similar ammount of zeros and ones in the subset.
 
 # 1. SET PATH TO WORKING DIRECTORY
-path = "PATH TO THE DATA"
-setwd(path)
+# path = "PATH TO THE DATA"
 
+setwd(path)
 # 1. Read data
 # D = read.csv("Global_AMR_Final_Database_2_corrected_coordinates 1.csv")
 # D = D[is.na(d$year)==F,] # Eliminate data without year
@@ -79,25 +79,38 @@ C = lapply(1:length(countries), f2)
 f3 = function(x){d.w[d.w$continent==continent[x],]}                  
 CONT = lapply(1:length(continent), f3)
 
-
 # Select countries with a minimum sample size for each of the species
 
 
-f.sample = function(x){
-  require(ape)
-  Q = table(X[[x]]$specie))>10
+f.sample = function(x){ # x = number of countries
+  Q = table(X[[x]]$specie)>10 # 10 is minimum number of observations per species
+  
   idx = names(Q[Q==T]) # NAMES OF SPECIES WITH SAMPLE ABOVE N min.
-  q = X[[x]][is.na(match(X[[x]]$species, idx))==F,]
-  nms = unique(q$species) # names of species in the data subset
-  v = keep.tip(V, nms) # phylogeny with species within the data subset
+  X[[x]][is.na(match(X[[x]]$species, idx))==F,] # q is the dataframe with species that have > 10 observations.
+  
+}
+
+X = C
+q = lapply(1:length(X), f.sample) # LIST OF COUNTRIES (C) WITH A LIST OF SPECIES DATA, WITH > 10 samples.
+
+# RANDMLY SELECT ONE OBSERVATION PER SPECIES
+#  nms = unique(q$species) # names of species in the data subset
+#  require(ape)
+#  v = keep.tip(V, nms) # phylogeny with species within the data subset
   # SELECT A RANDOM OBSERVATION WITHIN SAMPLES OF EACH FACTOR LEVEL (species) 
   #  https://stackoverflow.com/questions/40715863/select-a-random-sample-within-levels-of-a-factor-unequal-stratum-size-per-facto
-  w = split.data.frame(X[[x]], X[[x]]$specie)
-  fx = function(x){sample(w[[x]]$id, 1)}
-  do.call(fx, w)  ###### IN DEVELOPMENT!
+  
+#  w = split.data.frame(X[[x]], X[[x]]$specie) # x = number of species
 
+# MAP THE FUNCTION?
 
-
+  fx = function(x){
+    q = w[[x]]
+    W = split.data.frame(q, q$specie) # x = number of species 
+    sample(q$id, 1)}
+  
+  w2 = do.call(fx, w)  ###### IN DEVELOPMENT! This must be a list of ids one per species. This will be used to select the subset from X[[x]]
+  q[is.na(match(q$id, unlist(w2))==F,]  
   }
 
 V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
