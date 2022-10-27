@@ -105,10 +105,9 @@ q = lapply(1:length(X), f.sample) # LIST OF COUNTRIES (C) WITH A LIST OF SPECIES
 # MAP THE FUNCTION?
 
   fx = function(x){
-    q = w[[x]]
-    W = split.data.frame(q, q$specie) # x = number of species 
-    sample(q$id, 1)}
-  
+#    w = q[[x]]
+    w = split.data.frame(q[[x]], q[[x]]$specie) # x = number of species     
+      
   w2 = do.call(fx, w)  ###### IN DEVELOPMENT! This must be a list of ids one per species. This will be used to select the subset from X[[x]]
   q[is.na(match(q$id, unlist(w2))==F,]  
   }
