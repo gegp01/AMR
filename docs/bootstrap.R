@@ -66,6 +66,8 @@ names(d)[names(d)=="amino"]<-"aminoglycoside"
 
 # RUN f1 TO GENERATE A WORKING SUBSET OF THE DATA
 d.w = f1(t.min=t.min, s.min=s.min)
+d.w$idx = paste("x", 1:nrow(d.w), sep="_")
+row.names(d.w) = d.w$idx
 
 # 4. SELECT DATA IN d.w FROM A SINGLE COUNTRY
 countries = unique(d.w$country)
@@ -81,17 +83,23 @@ CONT = lapply(1:length(continent), f3)
 
 # Select countries with a minimum sample size for each of the species
 
-
 f.sample = function(x){ # x = number of countries
   Q = table(X[[x]]$specie)>10 # 10 is minimum number of observations per species
-  
   idx = names(Q[Q==T]) # NAMES OF SPECIES WITH SAMPLE ABOVE N min.
-  X[[x]][is.na(match(X[[x]]$species, idx))==F,] # q is the dataframe with species that have > 10 observations.
-  
+  q = X[[x]][is.na(match(X[[x]]$species, idx))==F,] # q is the dataframe with species that have > 10 observations.
+  q = q[rowSums(q[,antibiotics])>0,] # SELECT ROWS WITH AT LEAST 1 RESITANCE, NO ZERO rowSums()
+#  q = q[sapply(1:length(q), f4)]
+#  z = ifelse(nrow(q)==0, F, T)
+#  row.names(q) = paste("x", 1:nrow(q), sep="_")
+  q
 }
 
 X = C
-q = lapply(1:length(X), f.sample) # LIST OF COUNTRIES (C) WITH A LIST OF SPECIES DATA, WITH > 10 samples.
+#row.names(X) = paste("x", nrow(X), sep="_")
+q2 = lapply(1:length(X), f.sample) # LIST OF COUNTRIES (C) WITH A LIST OF SPECIES DATA, WITH > 10 samples; AND NO rowSums = ZERO.
+
+f4 = function(x){nrow(q2[[x]])>0}
+q = q2[sapply(1:length(q2), f4)]
 
 # RANDMLY SELECT ONE OBSERVATION PER SPECIES
 #  nms = unique(q$species) # names of species in the data subset
@@ -103,17 +111,21 @@ q = lapply(1:length(X), f.sample) # LIST OF COUNTRIES (C) WITH A LIST OF SPECIES
 #  w = split.data.frame(X[[x]], X[[x]]$specie) # x = number of species
 
 # MAP THE FUNCTION?
+  fx.1 = function(y){sample(w[[y]]$idx, 1)}
+
 
   fx = function(x){
 #    w = q[[x]]
-    w = split.data.frame(q[[x]], q[[x]]$specie) # x = number of species     
-      
-  w2 = do.call(fx, w)  ###### IN DEVELOPMENT! This must be a list of ids one per species. This will be used to select the subset from X[[x]]
-  q[is.na(match(q$id, unlist(w2))==F,]  
+    w = split(q[[x]], q[[x]]$species) # x = number of species
+    sapply(1:length(w), fx.1)
+#  w2 = do.call(fx, w)  ###### IN DEVELOPMENT! This must be a list of ids one per species. This will be used to select the subset from X[[x]]
+#  q[is.na(match(q$id, unlist(w2))==F,]
+#    q[[x]][is.na(match(q[[x]]$idx, id.x))==F,]
   }
 
-V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
-X = C  
+Z=lapply(1:length(q), fx)          
+          
+# V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
 
 
 ###################
