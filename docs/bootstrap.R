@@ -105,27 +105,49 @@ f4 = function(x){nrow(q2[[x]])>0}
 q = q2[sapply(1:length(q2), f4)]
 
 # RANDMLY SELECT ONE OBSERVATION PER SPECIES
-#  nms = unique(q$species) # names of species in the data subset
-#  require(ape)
-#  v = keep.tip(V, nms) # phylogeny with species within the data subset
-  # SELECT A RANDOM OBSERVATION WITHIN SAMPLES OF EACH FACTOR LEVEL (species) 
-  #  https://stackoverflow.com/questions/40715863/select-a-random-sample-within-levels-of-a-factor-unequal-stratum-size-per-facto
-  
-#  w = split.data.frame(X[[x]], X[[x]]$specie) # x = number of species
+f.sample.taxa = function(y) {sample(y$idx, 1)}
 
-# MAP THE FUNCTION?
-  fx.1 = function(y){sample(w[[y]]$idx, 1)}
+fx = function(x) {w = split(q[[x]], q[[x]]$species) # x = number of species
+    lapply(w, f.sample.taxa)}
 
-  fx = function(x){#    w = q[[x]]
-    w = split(q[[x]], q[[x]]$species) # x = number of species
-#    sapply(1:length(w), fx.1) #  w2 = do.call(fx, w)  ###### IN DEVELOPMENT! This must be a list of ids one per species. This will be used to select the subset from X[[x]]
-#  q[is.na(match(q$id, unlist(w2))==F,]
-#    q[[x]][is.na(match(q[[x]]$idx, id.x))==F,]
-  }
-
+# LIST OF ONE RANDOM SAMPLE PER COUNTRY/REGION)
 Z=lapply(1:length(q), fx)          
-          
-# V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
+
+# SELECT samples in Z with more than 10 species
+z = Z[lapply(Z, length)>10]
+
+# DATA WITH MORE THAN 10 SPECIES
+D=d.w[is.na(match(d.w$idx, unlist(z)))==F,]
+unique(D$country) # "Australia" "China"     "UK"        "USA" 
+unique(D$specie) # 20 species
+
+# 2. Phylogenetic Clustering
+require(ape)
+V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
+
+# Prune tree
+tr = keep.tip(V, gsub(" ", "_", names(z[[1]])))
+plot(tr)
+
+f.phylo = function(x) {tr = keep.tip(V, gsub(" ", "_", names(z[[x]])))}
+f.data = function(x) {d.w[is.na(match(d.w$idx, z[[x]]))==F, c(antibiotics, "country")]}
+
+tr = lapply(1:length(z), f.phylo)
+D =  lapply(1:length(z), f.data)
+
+# PLOT TREES
+svg("sample_trees.svg")
+  par(mfrow=c(2,2))
+  plot(tr[[1]], main=unique(D[[1]]$country))
+  plot(tr[[2]], main=unique(D[[2]]$country))
+  plot(tr[[3]], main=unique(D[[3]]$country))
+  plot(tr[[4]], main=unique(D[[4]]$country))
+dev.off()
+
+#######
+
+
+
 
 
 ###################
