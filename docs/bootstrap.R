@@ -104,10 +104,12 @@ V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
 
 # Prune tree
 f.phylo = function(x) {tr = keep.tip(V, gsub(" ", "_", names(z[[x]])))}
-f.data = function(x) {d.w[is.na(match(d.w$idx, z[[x]]))==F, c(antibiotics, "country", "species", "year")]}
+f.data = function(x) {d.w[is.na(match(d.w$idx, z[[x]]))==F, c(antibiotics, "country", "species", "year", "id", "idx")]}
 
 tr = lapply(1:length(z), f.phylo)
 D =  lapply(1:length(z), f.data)
+
+list(D, tr)
 
 # PLOT TREES
 #svg(paste("sample_trees.svg")
