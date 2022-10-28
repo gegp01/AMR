@@ -9,26 +9,8 @@
 # The data subset must contain similar ammount of zeros and ones in the subset.
 
 
-# 1. SET PATH TO WORKING DIRECTORY
-# path = "PATH TO THE DATA"
-
+# 1. SET PATH TO WORKING DIRECTORY. path = "PATH TO THE DATA"
 setwd(path)
-# 1. Read data
-# D = read.csv("Global_AMR_Final_Database_2_corrected_coordinates 1.csv")
-# D = D[is.na(d$year)==F,] # Eliminate data without year
-
-# 2. Select Regions
-require(rgdal)
-land = readOGR("https://gegp01.github.io/ServSoc/countries.geojson")
-
-# 2.1 Read species phylogeny
-require(ape)
-V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
-nms_tree = V$tip.label
-
-# DATA
-# Make a back up of the original data.
-#d.back = D 
 
 # 2.2 Names of the antibiotics
 antibiotics = c("aminoglycoside", "betalactamics", "colistin", "fosfomycin", "glycopeptide", "macrolide"
@@ -37,7 +19,7 @@ antibiotics = c("aminoglycoside", "betalactamics", "colistin", "fosfomycin", "gl
 ##############################################
 ##############################################
 
-# 3 SUBSET MAKER
+# 3 SUBSET of data  MAKER
 # FUNCTION TO MAKE SUBSETS OF a period of time from t.min to 2022, and select species with a minimum sample size (s.min).
 
 # 3.1 DETERMINE THE TIME WINDOW (YEAR)
@@ -116,63 +98,30 @@ Z=lapply(1:length(q), fx)
 # SELECT samples in Z with more than 10 species
 z = Z[lapply(Z, length)>10]
 
-# DATA WITH MORE THAN 10 SPECIES
-D=d.w[is.na(match(d.w$idx, unlist(z)))==F,]
-unique(D$country) # "Australia" "China"     "UK"        "USA" 
-unique(D$specie) # 20 species
-
 # 2. Phylogenetic Clustering
 require(ape)
 V = read.tree("https://gegp01.github.io/AMR/SpeciesLevelTree.newick")
 
 # Prune tree
-tr = keep.tip(V, gsub(" ", "_", names(z[[1]])))
-plot(tr)
-
 f.phylo = function(x) {tr = keep.tip(V, gsub(" ", "_", names(z[[x]])))}
-f.data = function(x) {d.w[is.na(match(d.w$idx, z[[x]]))==F, c(antibiotics, "country")]}
+f.data = function(x) {d.w[is.na(match(d.w$idx, z[[x]]))==F, c(antibiotics, "country", "species", "year")]}
 
 tr = lapply(1:length(z), f.phylo)
 D =  lapply(1:length(z), f.data)
 
 # PLOT TREES
-svg("sample_trees.svg")
-  par(mfrow=c(2,2))
-  plot(tr[[1]], main=unique(D[[1]]$country))
-  plot(tr[[2]], main=unique(D[[2]]$country))
-  plot(tr[[3]], main=unique(D[[3]]$country))
-  plot(tr[[4]], main=unique(D[[4]]$country))
-dev.off()
-
+#svg(paste("sample_trees.svg")
+#  par(mfrow=c(2,2))
+#  plot(tr[[1]], main=unique(D[[1]]$country))
+#  plot(tr[[2]], main=unique(D[[2]]$country))
+#  plot(tr[[3]], main=unique(D[[3]]$country))
+#  plot(tr[[4]], main=unique(D[[4]]$country))
+#dev.off()
+#
 #######
-
-
-
-
-
-###################
-ok = sapply(1:length(X), f.sampleX)
-C2 = C[ok]
-f3 = function(x){unique(C2[[x]]$country)}
-sapply(1:17, f3)
-
-# NOTE! THE SAMPLES ARE VERY UNBALANCED! FEW SAMPLES OF A SPECIES AND A LOT FROM ANOTHER SPECIES.
-
-# 5. PERFORM BOOTSTRAPPING ON EACH DATASELT IN THE LIST C
-# 5.1. Determine type of analysis
-f.glm = function(x){
-                    require(MCMCglmm)
-                    prior = X
-                    MCMCglmm(AMR~species + 1|taxa, data = D_)
-                    }
-# 5.2. Function to iterate the analysis in f.glm()                 
-f.bootstrap = function(x){
-  idx = paste("x", 1:nrow(d.c))
-  D_ = split.data.frame(C[[1]], C[[1]]$species) # SPLIT DATAFRAME BY SPECIES WITHIN THE COUNTRY IN C[[x]]
-  
-  # RUN f.glm WITHIN THIS FUNCTION.
-
-}
-                 
+# DATA WITH MORE THAN 10 SPECIES
+#D=d.w[is.na(match(d.w$idx, unlist(z)))==F,]
+#unique(D$country) # "Australia" "China"     "UK"        "USA" 
+#unique(D$species) # 20 species
                  
                  
