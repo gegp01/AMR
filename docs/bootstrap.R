@@ -8,6 +8,7 @@
 # A balanced sample of data will have the same number of observations for all species.
 # The data subset must contain similar ammount of zeros and ones in the subset.
 
+
 # 1. SET PATH TO WORKING DIRECTORY
 # path = "PATH TO THE DATA"
 
@@ -64,7 +65,8 @@ d = d[is.na(d$year)==F,] # Eliminate data without year
 # 2.2 Change name of antibiotic family
 names(d)[names(d)=="amino"]<-"aminoglycoside"
 
-# RUN f1 TO GENERATE A WORKING SUBSET OF THE DATA
+
+# RUN f1 TO GENERATE A WORKING SUBSET OF THE DATA (at t.min = 2010 and s.min = 10)
 d.w = f1(t.min=t.min, s.min=s.min)
 d.w$idx = paste("x", 1:nrow(d.w), sep="_")
 row.names(d.w) = d.w$idx
@@ -98,6 +100,7 @@ X = C
 #row.names(X) = paste("x", nrow(X), sep="_")
 q2 = lapply(1:length(X), f.sample) # LIST OF COUNTRIES (C) WITH A LIST OF SPECIES DATA, WITH > 10 samples; AND NO rowSums = ZERO.
 
+# ELIMNIATE COUNTRIES WITH NO SAMPLES. (All species have less than 10 obs) 
 f4 = function(x){nrow(q2[[x]])>0}
 q = q2[sapply(1:length(q2), f4)]
 
@@ -113,12 +116,9 @@ q = q2[sapply(1:length(q2), f4)]
 # MAP THE FUNCTION?
   fx.1 = function(y){sample(w[[y]]$idx, 1)}
 
-
-  fx = function(x){
-#    w = q[[x]]
+  fx = function(x){#    w = q[[x]]
     w = split(q[[x]], q[[x]]$species) # x = number of species
-    sapply(1:length(w), fx.1)
-#  w2 = do.call(fx, w)  ###### IN DEVELOPMENT! This must be a list of ids one per species. This will be used to select the subset from X[[x]]
+#    sapply(1:length(w), fx.1) #  w2 = do.call(fx, w)  ###### IN DEVELOPMENT! This must be a list of ids one per species. This will be used to select the subset from X[[x]]
 #  q[is.na(match(q$id, unlist(w2))==F,]
 #    q[[x]][is.na(match(q[[x]]$idx, id.x))==F,]
   }
