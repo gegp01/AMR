@@ -67,8 +67,10 @@ CONT = lapply(1:length(continent), f3)
 
 # Select countries with a minimum sample size for each of the species
 
+min.obs = ifelse(exists("min.obs"), min.obs, 10)
+
 f.sample = function(x){ # x = number of countries
-  Q = table(X[[x]]$specie)>10 # 10 is minimum number of observations per species
+  Q = table(X[[x]]$specie)>min.obs # 10 is minimum number of observations per species
   idx = names(Q[Q==T]) # NAMES OF SPECIES WITH SAMPLE ABOVE N min.
   q = X[[x]][is.na(match(X[[x]]$species, idx))==F,] # q is the dataframe with species that have > 10 observations.
   q = q[rowSums(q[,antibiotics])>0,] # SELECT ROWS WITH AT LEAST 1 RESITANCE, NO ZERO rowSums()
