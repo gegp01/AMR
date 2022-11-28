@@ -98,7 +98,10 @@ fx = function(x) {w = split(q[[x]], q[[x]]$species) # x = number of species
 Z=lapply(1:length(q), fx)          
 
 # SELECT samples in Z with more than 10 species
-z = Z[lapply(Z, length)>10]
+
+min.richness = ifelse(exists("min.richness"), min.richness, 10)
+
+z = Z[lapply(Z, length)>min.richness]
 
 # 2. Phylogenetic Clustering
 require(ape)
