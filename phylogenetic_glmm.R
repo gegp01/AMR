@@ -78,14 +78,17 @@ nms[is.na(match(nms, V$tip.label))]
 # Construct phylogenetic covariance matrix
 M <- vcv.phylo(V)
 
+D_t = d[is.na(d$year)==F,]
 D = d[is.na(d$year)==F & is.na(d$country)==F,]
+
 D$taxa = gsub(" ", "_", D$species)
 
 # Specify model
-mod0 <- mdr ~ year + ISO.3
+mod0 <- mdr ~ year
+mod0.1 <- mdr ~ log10(year)
 
 # Construct phylogenetic covariance matrix
-M <- vcv.phylo(V)
+#M <- vcv.phylo(V)
 
 # PRIOR
 prior1 <- list(
@@ -94,6 +97,8 @@ prior1 <- list(
   #           , G2 = list(V = 1, nu = 0.002))  # Added G2 prior for binary response
 )
 
+
+require(MCMCglmm)
 # Fit model # TIME CONSUMING!!!
 mod1 <- MCMCglmm(
   mod0, random = ~ taxa, family = "categorical",
@@ -101,6 +106,15 @@ mod1 <- MCMCglmm(
 )
 
 summary(mod1)
+
+############## MODEL: MDR_binary ~ year
+mod_log10 <- MCMCglmm(
+  mod0.1, random = ~ taxa, family = "categorical",
+  data = D, verbose = FALSE, nitt = 13000, thin = 50, burnin = 3000, prior = prior1
+)
+
+summary(mod_log10)
+plot(mod_log10)
 
 
 ########################################
