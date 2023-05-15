@@ -1,0 +1,1199 @@
+---
+title: "Worldwide Emergence of Bacteria with Acquired Resistance to Multiple Antibiotics"
+author: "BG', GEGP', WM, TS, SS"
+date: "`r Sys.Date()`"
+# output: pdf_document # Error!
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+</br>
+
+#### ABSTRACT
+<div align="justify">
+Bacteria Resistant to Multiple Drug treatments (MDR) are a major concern of Public Health. The lack of options to treat bacterial infections can impair human health and reduce food production globally putting millions of people at risk. Hence, scientific research has grown exponentially. Advances on genomics facilitated remarkable discoveries of acquired genes of resistance (ARG) in pathogens like Campylobacter spp, Salmonella spp, <i>Escherichia coli</i> and <i>Staphylococcus aureus</i>. 
+
+Nonetheless, it is still unclear which bacteria species are more likely to acquire resistance against antibiotics; whether antibiotic resistance is increasing in the different taxa; and in which region of the world is more likely to find resistant bacteria. To have an insight on MDR, we present a phylogenomic analysis on more than 250,000 full genome sequences, including 63 bacteria species; and the detection <i>in silico</i> of 3147 genetic markers of resistance. Our study gives insight on the horizontal transmission of MDR across taxa worldwide; and some factors that promote its evolution; i.e. (1) Phylogenetic relatedness of resistant bacteria; and (2) Anthropogenic factors: Human population size; Antibiotic use in animals and Gross Domestic Product (GDP).
+</div>
+
+</br></br>
+
+#### INTRODUCTION
+
+<div align = "justify"> 
+Discovery of Penicillin by Alexander Fleming in 1928, and posterior new antibiotic development, supposed a huge health revolution, since most of untreatable and deadly bacterial infections became easily treatable, greatly expanding human lifespan. Moreover, antibiotics allowed the treatment of livestock bacterial infections, improving the food security of the different territories. However, its use (and misuse) led to the emergence of resistance to these compounds, as already was stated by Fleming (Rosenblatt-Farrell, 2009).
+
+Currently, antimicrobial resistance (AMR) is a major public health concern (Hofer, 2019; Ikuta et al., 2022). Since the lack of options to treat bacterial infections can impair human health and reduce food production globally, antimicrobial resistance may put millions of people at risk, at worse levels than the pre-antibiotic era. It has been estimated that, in 2019, 4.29 million deaths were associated with bacterial AMR, comprising 1.27 million deaths associated with AMR (Murray et al., 2022). These numbers are worrisome and predicted to worsen, to 10 million deaths in 2050, becoming the first cause of death surpassing cancer (O’Neill, 2016). 
+
+AMR mechanisms can occur by point mutations in the bacterial chromosomes or due to the acquisition of antimicrobial resistance genes (ARG) via horizontal gene transfer by mobile genetic elements such as plasmids, transposons or integrons (Levy & Bonnie, 2004). Horizontal transmission greatly difficult the control of AMR, since it facilitates the dissemination of Acquired Resistance Genes  (ARG). ARG have been found in a wide range of locations, including wildlife animals that never received antibiotic treatment (Swift et al., 2019), aquatic ecosystems (Delgado-Blas et al., 2021), and pristine environments (Hwengwere et al., 2022). 
+
+
+Due to the general concern about AMR, scientific research focuses on AMR. Various outstanding studies analyzed the global status and burden of AMR in both, humans (Ikuta et al., 2022; Murray et al., 2022), livestock (Van Boeckel et al., 2019; Allel et al., 2023). Although these studies gave us important insight on AMR, they are limited. These studies are based on phenotypic data, which is crucial from a clinical point of view; however they cannot capture the pathways of acquisition. 
+
+
+To this end, an approach from Genomics aided in analyzing the drivers of AMR (Waddington et al., 2022). In particular, AMR in some pathogenic bacteria such as Staphylococcus aureus (Pennone et al., 2022), Streptococcus agalactiae (Meroni et al., 2022), Campylobacter (Cobo-Díaz et al., 2021), Escherichia coli (Pires et al., 2022) or Salmonella (Fenske & Scaria, 2021). However, studies based on one or few bacteria species fail in providing a global picture of the status quo of AMR. To our knowledge, no study has investigated the evolution of acquired resistance genes against multiple antibiotics across a wide spectrum of bacteria species, regions and years. Hence we aimed at analyzing the most evidence available.
+
+The advent of BIGSdb and PubMLST database (Jolley et al., 2018) can allow genomic studies with a wide spectrum, since it also contains a great number of genomes from multiple bacterial species and, more important, allows to do the bioinformatic analysis online in the same platform. Thus, it does not only facilitate the analyses (allowing to use a higher number of bacterial genomes), but also democratize the access to this type of projects, since it does not require a big computational capability and more research groups across the world can perform this type of analyses. 
+
+Here we analyzed the presence of acquired ARG in 254723 genomes from PubMLST and BigsDB Pasteur databases. These sequences represented 431 bacterial species from countries with data from 1885 to 2022. We analyzed the spatial distribution and evolution of AMR across the time and bacterial species. Moreover, we performed a phylogenetic comparative analysis, for finding key factors associated with the current global situation.  
+
+</div>
+
+</br></br>
+
+#### MATERIAL AND METHODS
+
+<div align = "justify">
+2.1 Selection of genomes
+
+PubMLST and BigsDBPasteur databases were used to acquire genomes from 34 different databases. All genomes available were downloaded and 256127 isolates were retrieved.
+
+All available metadata was also downloaded. 
+
+
+2.2 Quality control
+
+Quality control is generally done before to upload genomes to PubMLST. However, to ensure good quality of the isolates, all genomes were brought under a quality control using PubMLST quality control option and those isolates with a length upper or lower than 3 standard deviations of the mean’s length of every genus were deleted. After this step, 235451 genomes were selected to continue with the analysis. 
+
+Moreover, genomes without location and year information were not considered, resulting in a final dataset of 152452 genomes.
+
+2.3 Detection of antimicrobial resistance genes
+
+Resfinder Database (containing 3147 acquired AMR genes) was downloaded (accessed 26th February 2022) from source and used as genome reference in Genome Comparator from PubMLST. Genes were classified into 16 antimicrobial families (aminoglycosides, betalactamics, colistin, disinfectants, fosfomycin, fusidic acid, glycopeptide, macrolide, nitroimidazole, oxazolidinone, phenicols, pseudomonic acid, quinolones, rifampicin, sulfonamides, tetracyclines and trimethoprim) according Resfinder classification. It was considered that they have resistance to a family if they possess at least one gene of the determined family. Pseudomonic acid, disinfectants and fusidic acid were discarded in order to only consider antibiotics.</div>
+
+</br></br>
+
+#### RESULTS
+
+```{r d, echo = F, warning = F, message = F}
+
+require(ape)
+require(Hmisc)
+# path = "~/sandbox/AMR/"
+# setwd(path)
+#d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_corrected.csv", sep = ";")
+d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_ISO3_abnamescorrected.csv", sep = ",")
+d.back = d
+
+#names(d)[names(d)=="Betalactamics"]<-"Betalactans"
+#names(d)[names(d)=="Sulfonamides"]<-"Sulphonamides"
+
+
+#d = d[is.na(d$year)==F,] # Eliminate data without year
+
+antibiotics = c("Aminoglycosides","Beta.lactams","Polymyxins"
+  ,"Fosfomycin","Glycopeptides","Macrolides","Oxazolidinones","Phenicols"      
+  ,"Quinolones","Rifampicin","Sulphonamides","Tetracyclines","Trimethoprim")
+
+d$amr = rowSums(d[,antibiotics])
+d = d[is.na(rowSums(d[, antibiotics]))==F,] # ELIMINATE NAs IN ANTIBIOTICS
+
+```
+
+<div align="center"><img src="AMR_Global_Tree_Arrows.png" alt="phylogenetic tree"></div>
+
+<div align = "justify">
+<b>Figure 1. Bacteria Supertree</b>. Phylogenetic trees for every genus were generated. Needed alignments were built using Mafft in GenomeComparator in PubMLST following a RibosomalMLST scheme. The maximum number of genomes allowed in every batch are 2000. Most of the genus had a superior number of isolates so it was impossible to align all the genomes in the same process. The approach used was based on making alignments of 2000 genomes and, then, merge them using Mafft. The generated alignments were used to build a phylogenetic tree for every genus using Rapidnj.
+
+Moreover, a tree capturing all genus was built. 500 genomes of each genus were randomly selected using Microsoft Excel and aligned in PubMLST using Mafft in GenomeComparator following RibosomalMLST scheme. In the case of genus with less of 500 isolates, all the samples were selected. All the resulting alignments were merged using Mafft and a maximum-likelihood tree was built using RAxML. The resulting newick file was visualized using Microreact. </div>
+
+<br><br>
+
+```{r d_, echo = F, warning = F, message = F}
+
+d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_ISO3_abnamescorrected.csv", sep = ",")
+d.back = d
+
+antibiotics = c("Aminoglycosides","Beta.lactams","Polymyxins"
+  ,"Fosfomycin","Glycopeptides","Macrolides","Oxazolidinones","Phenicols"      
+  ,"Quinolones","Rifampicin","Sulphonamides","Tetracyclines","Trimethoprim")
+
+d$amr = rowSums(d[,antibiotics])
+d = d[is.na(rowSums(d[, antibiotics]))==F,] # ELIMINATE NAs IN ANTIBIOTICS
+
+# SELECT SPECIES WITH AT LEAST 100 SAMPLES GLOBALY.
+X = table(d$species)
+taxa = names(X[X>=100])
+#taxa = names(X[X>=600])
+d.100 = d[is.na(match(d$species, taxa))==F,]
+
+D = d.100
+d.m = D[,antibiotics]
+
+####### DATA BY species
+f.by.species = function(x){
+  q = D$species
+  y = d.m[, antibiotics[x]]
+  
+  data.frame(species = q, presence = y, marker = antibiotics[x])
+}
+
+L = do.call(rbind, lapply(c(1:13), f.by.species))
+L1 = L[L$presence==1,] # only positives
+S = table(L1$species, L1$marker)
+
+com = S
+
+ok = is.na(match(D$species, rownames(com)))
+sample.size = table(D$species[ok==F])
+sample.size = sample.size[rownames(com)]
+
+f.prev = function(x){com[,x]/sample.size}
+prevalence = sapply(1:13, f.prev)
+colnames(prevalence) = antibiotics
+
+# READ PHYLOGENY
+require(ape)
+V = read.tree("~/sandbox/AMR/species_level_tree.newick") 
+
+nms = rownames(com)
+nms=gsub(" ", "_", nms)
+phy = keep.tip(V, nms)
+
+#comX = com
+comX = prevalence
+rownames(comX) = nms
+colnames(comX) = substr(colnames(comX), 1, 3)
+
+```
+
+
+```{r fig2a, fig.height = 10, fig.width = 10, fig.align = "center", echo=FALSE}
+
+# FIGURA: ESTUCTURA FILOGENETICA DE LA RESISTENCIA A ANTIBIOTICOS
+par(mar = c(1, 1, 1, 1), cex= 0.9)
+
+plot(phy, x.lim=6, cex= 0.9, align.tip.label=T, label.offset= 2.72, type= "p")
+phydataplot(x = comX, phy = phy, "m", width= 0.20, offset = 0.1, border= "lightblue",
+  funcol = colorRampPalette(c("azure", "red")), legend = "none")
+
+title(main="antibiotic families", cex.main = 0.8, font.main=3)
+
+legend(0.3,2, title = "prevalence", legend = c(min(comX), max(comX)), fill = c("azure", "red"), horiz = T)
+
+paste("DATA: {", dim(comX)[1], "species", dim(comX)[2], "antibiotics}")
+
+```
+
+<b>Figure 2A</b>. Distribution of acquired genes of resistance against different antibiotic families across bacteria species. Prevalence = positives / samples for each species. Note: only species with more than 99 samples are considered.
+
+</br>
+
+##### <i>Phylogenetic structure of resitance (clustering)</i>
+
+Acquired genes of resistance are clustered ("underdispersed") compared with a null model that maintains the frequency of genetic markers and randomizes the presence of resistance genes across bacteria species.  Significant clustering suggests that resistance genes are more likely to occur in particular phylogenetic groups of bacteria, rather than random (See Figure 1, 2a)
+
+```{r phylo_stats, fig.height = 10, fig.width = 10, fig.align = "center", echo=FALSE}
+
+# PHYLOGENETIC SYGNAL
+
+require(picante, quietly=T)
+c(phylostruct(t(comX), phy, env=NULL, metric="psc", 
+              null.model=c("frequency"), # "richness"
+              runs=100, it=1000, alpha=0.05, fam="binomial")[c(2,3,5:8)]
+  )
+
+```
+
+</br></br>
+
+```{r fig2b, fig.height = 10, fig.width = 23, fig.align = "center", echo=FALSE}
+
+par(mai=c(5,2,1,1))
+Q = sort(table(D$species)/sum(sample.size))
+barplot(Q*100, las= 2, cex.names = 1.5,ylim = c(0,30),col = "lightblue",font = 3,axes= F)
+grid(col="darkslategrey")
+barplot(Q*100, las= 2, cex.names = 1.5,ylim = c(0,30),col = "lightblue",font = 3,axes= F, add= T)
+axis(2, font.axis = 1, cex.axis = 2)
+title(ylab="percentage of isolates", cex.lab = 2, line = 4); title(main = "Figure 2B", cex.main=2, font.main= 1)
+
+```
+
+<b>Figure 2B</b>. Percentage of isolates by species.
+
+</br></br>
+
+```{r fig2c, fig.height = 10, fig.width = 23, fig.align = "center", echo=FALSE}
+par(mai=c(5,2,1,1))
+
+D$mdr = rowSums(D[,antibiotics])>=3
+
+D.sp = split.data.frame(D, D$species)
+
+f.mdr = function(x){
+  x = table(D.sp[[x]]$mdr)
+  x[2]/sum(x)
+
+    }
+
+D.mdr = lapply(1:length(D.sp), f.mdr)
+names(D.mdr) = names(D.sp)
+
+mdr = do.call(rbind, D.mdr)
+q = mdr[,1]
+
+q = q[names(Q)]
+
+barplot(q*100, las= 2, cex.names = 1.5,ylim = c(0,100),col = "red",font = 3,axes= F)
+grid(col="darkslategrey")
+barplot(q*100, las= 2, cex.names = 1.5,ylim = c(0,100),col = "red",font = 3,axes= F, add= T)
+axis(2, font.axis = 1, cex.axis = 2)
+title(ylab="percentage of MDR isolates", cex.lab = 2, line = 4); title(main = "Figure 2C", cex.main=2, font.main= 1)
+
+```
+<b>Figure 2C</b>. Percentage of Multiple Drug Resistance (MDR) by species. MDR is defined as resistant to 3 or more classes of antibiotic.
+
+</br></br>
+
+```{r fig2d, fig.height = 10, fig.width = 23, fig.align = "center", echo=FALSE}
+
+a.sample = colSums(D[,antibiotics])/nrow(D) # positives /total samples
+
+par(mai=c(4,2,1,1))
+Q = sort(a.sample)
+barplot(Q*100, las= 2, cex.names = 2.5,ylim = c(0,50),col = "lightblue",font = 3,axes= F)
+grid(col="darkslategrey")
+barplot(Q*100, las= 2, cex.names = 2.5,ylim = c(0,50),col = "lightblue",font = 3,axes= F, add= T)
+axis(2, font.axis = 1, cex.axis = 2)
+title(ylab="percentage of isolates", cex.lab = 2, line = 4); title(main = "Figure 2D", cex.main=2, font.main= 1)
+
+```
+
+<b>Figure 2D</b>. Percentage isolates by antibiotic 
+
+</br></br>
+
+```{r fig2e, fig.height = 10, fig.width = 23, fig.align = "center", echo=FALSE, eval = T}
+
+f.by.species = function(x){
+  q = D$species
+  y = d.m[, antibiotics[x]]
+  mdr = rowSums(D[, antibiotics])>=3
+  data.frame(species = q, presence = y, marker = antibiotics[x], mdr)
+}
+
+L = do.call(rbind, lapply(c(1:13), f.by.species))
+D.a = split.data.frame(L, L$marker)
+
+f.positives = function(x) {
+  X = D.a[[x]]
+  X1 = X$presence==1
+  x = paste(X1, X$mdr, sep="|")
+  boolean = x=="TRUE|TRUE"
+  table(boolean)["TRUE"]/nrow(X)
+    }
+
+Q.a = as.vector(do.call(rbind, lapply(1:13, f.positives)))
+names(Q.a) = names(D.a)
+
+q = Q.a
+q = q[names(Q)]
+
+par(mai=c(4,2,1,1))
+barplot(q*100, las= 2, cex.names = 2.5,ylim = c(0,15),col = "red",font = 3,axes= F)
+grid(col="darkslategrey")
+barplot(q*100, las= 2, cex.names = 2.5,ylim = c(0,15),col = "red",font = 3,axes= F, add= T)
+axis(2, font.axis = 1, cex.axis = 2)
+title(ylab="percentage of MDR isolates", cex.lab = 2, line = 4); title(main = "Figure 2E", cex.main=2, font.main= 1)
+
+```
+<b>Figure 2E</b>. Percentage MDR by antibiotic class.
+
+</br></br>
+
+
+##### <i>Geographic distribution of AMR</i>
+
+
+</br>
+
+```{r map_species_mdr, echo=F, message = F, warning = F, fig.height=15, fig.width=15, fig.align="center"}
+require(rgdal) # important changes by 2023!
+require(raster)
+require(sp)
+require(sf)
+require(graticule)
+
+d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_ISO3_abnamescorrected.csv", sep = ",")
+antibiotics = c("Aminoglycosides","Beta.lactams","Polymyxins"
+  ,"Fosfomycin","Glycopeptides","Macrolides","Oxazolidinones","Phenicols"      
+  ,"Quinolones","Rifampicin","Sulphonamides","Tetracyclines","Trimethoprim")
+
+d$amr = rowSums(d[,antibiotics])
+d = d[is.na(rowSums(d[, antibiotics]))==F,] # ELIMINATE NAs IN ANTIBIOTICS
+
+d.m = d[,antibiotics]
+
+# SELECT SPECIES WITH AT LEAST 100 SAMPLES GLOBALY.
+X = table(d$species)
+taxa = names(X[X>=100])
+#taxa = names(X[X>=600])
+d.100 = d[is.na(match(d$species, taxa))==F,]
+#d.100 = na.exclude(d.100[, antibiotics])
+
+#land<-readOGR(dsn = "http://gegp01.github.io/ServSoc/countries.geojson")
+land<-readOGR(dsn = "~/sandbox/AMR/countries.geojson", verbose = F)
+l2 <- spTransform(land, CRS("+proj=robin +lon_0=0w"))
+l3 <- spTransform(land, CRS("+proj=laea +lat_0=0 +lon_0=0 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs "))
+
+# GRID OF MERIDIANS AND PARALELS
+xx <- c(-180,-150,-120,-90, -60, -30, 0, 30, 60, 90, 120, 150, 180)
+yy <- c(-90,-80,-60,-40,-20, 0, 20,40,60,80, 90)
+prj <- "+proj=robin +lon_0=0w"
+grid_ = graticule(lons = xx, lats = yy, proj = prj)
+
+
+#samples = table(d$ISO.3)
+samples = table(d.100$ISO.3)
+
+top10 = samples[samples>quantile(na.omit(samples), probs = 1:10/10)[9]]
+
+land@data$sample = samples[land@data$ISO_A3]
+l2@data$samples = as.numeric(samples[l3@data$ISO_A3])
+l2@data$samples = ifelse(is.na(l2@data$samples), 0, l2@data$samples)
+
+l3@data$samples = samples[l3@data$ISO_A3]
+
+x.vector = log10(as.numeric(l3@data$samples))
+
+ncolors= 5
+my_palette <- grDevices::colorRampPalette(c("azure", "darkorange"))(ncolors)
+mypal=my_palette[cut(x.vector,ncolors)]
+names(mypal) = names(x.vector)
+
+###########
+# BARPLOT 
+
+# SPĹIT DATA BY COUNTRY
+# Select top 10 countries most sampled
+
+o = sort(top10[2:18], decreasing = T) # first element in top10 is not valid.
+
+#D = d[is.na(match(d$ISO.3, names(o)))==F,] # first element in top10 is not valid.
+D = d.100[is.na(match(d.100$ISO.3, names(o)))==F,] 
+
+
+D$mdr = rowSums(D[,antibiotics])>=3
+
+#a.sample = colSums(D[,antibiotics])/nrow(D) # positives /total samples
+d.m = D[,antibiotics]
+
+CONT = split.data.frame(D, D$ISO.3)
+
+CONT_top10 = CONT[names(o)] # ORDER LIST BASED ON SAMPLE SIZE
+
+f1 = function(x) {
+  Z = table(CONT_top10[[x]]$species, CONT_top10[[x]]$mdr) 
+  (Z[,2]/(Z[,1]+Z[,2]))*100
+  }
+
+Q = lapply(1:length(CONT_top10), f1)
+names(Q) = names(CONT_top10)
+
+###################
+#m <- rbind(c(1, 2, 3, 4), c(5, 5, 5, 5), c(5,5,5,5), c(6,7,8,9))
+#m <- rbind(c(1, 1, 2, 2), c(5, 5, 5, 5), c(5,5,5,5), c(3,3,4,4))
+m <- rbind(c(1, 2, 3), c(5, 5, 5), c(5,5,5), c(4,6,7))
+
+#print(m)
+layout(m)
+
+par(mai=c(2,0.5,0.5,0.5), font.main = 2, font.axis=3, cex.names=1.1)
+
+b1 = sort(Q[[1]])
+barplot(b1[b1>0], main = names(Q)[1], las = 2, border=NA, col = "red", ylim = c(0, 100), ylab = "% MDR", axes=F)
+axis(2)
+
+b2 = sort(Q[[2]])
+barplot(b2[b2>0], main = names(Q)[2], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+b3 = sort(Q[[3]])
+barplot(b3[b3>0], main = names(Q)[3], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+b4 = sort(Q[[4]])
+barplot(b4[b4>0], main = names(Q)[4], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F, ylab = "% MDR")
+axis(2)
+
+par(mai=c(0,0,0,0), font.main = 3)
+plot(grid_, add= F, col="darkslategrey")
+plot(l2, col=mypal, main = "", add= T)
+legend("left", cex=1.5, box.lty = "solid", box.col = "white", bg="white", border = "darkslategrey", horiz = F, inset = 0.1, title= expression("sample size log"[10]), legend=round(c(quantile(na.omit(x.vector),probs= (1:5)/5)), 0), fill = my_palette)
+
+
+par(mai=c(2,0.5,0.5,0.5), font.main = 1, font.axis=3)
+b5 = sort(Q[[5]])
+barplot(b5[b5>0], main = names(Q)[5], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+b6 = sort(Q[[6]])
+barplot(b6[b6>0], main = names(Q)[6], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+# Global statistitics, calculate for all countries
+
+D_ = d.100# first element in top10 is not valid.
+
+D_$mdr = ifelse(rowSums(D_[,antibiotics])>=3, 1, 0)
+
+#a.sample = colSums(D[,antibiotics])/nrow(D) # positives /total samples
+#d.m_ = D_[,antibiotics]
+
+q.country = aggregate(D_$mdr, list(D_$country), mean)
+mdr.country = q.country[,2]*100
+
+q.species = aggregate(D_$mdr, list(D_$species), mean)
+mdr.species = q.species[,2]*100
+
+#q.antibiotic = aggregate(D_$mdr, list(D_$species), mean)
+#mdr.antibiotic = q.antibiotic[,2]*100
+
+paste("Average MDR % per country =", round(mean(na.omit(mdr.country)), 2), paste("; samples = ", nrow(d.100)), sep = "")
+paste("Average MDR % per species = ", round(mean(na.omit(mdr.species)), 2), paste("; samples = ", nrow(d.100)), sep = "")
+
+#colSums(d.100[,antibiotics])/nrow(d.100)
+
+y = na.exclude(d.100[,antibiotics])
+
+print("Average MDR % by antibiotic family:")
+round((colSums(y[,antibiotics])/nrow(y))*100, 2)
+paste("samples = ", nrow(y))
+
+#nrow(y)
+#nrow(d)
+#table(is.na(mdr.species))
+#table(is.na(mdr.country))
+#length(CONT_)
+
+#ADD STATISTICS: Average %MDR across countries; and MDR across species (number of species in data; and median, and range of MDR across species
+
+```
+
+<b> Map 1. World map marking sample size for each country. </b> Barcharts capture the percentage of samples with MDR by each species in the six countries most sampled.USA = United States; GBR = Great Britain; ZAF = South Africa; NLD = Netherlands; CHN = China; AUS = Australia. For clarity, species with MDR of 0% are not presented in the bar charts.
+
+<br><br>
+
+```{r map_antibiotic_mdr, eval = T, echo=F, message = F, warning = F, fig.height=15, fig.width=15, fig.align="center"}
+
+require(rgdal) # important changes by 2023!
+require(raster)
+require(sp)
+require(sf)
+require(graticule)
+
+d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_ISO3_abnamescorrected.csv", sep = ",")
+antibiotics = c("Aminoglycosides","Beta.lactams","Polymyxins"
+  ,"Fosfomycin","Glycopeptides","Macrolides","Oxazolidinones","Phenicols"      
+  ,"Quinolones","Rifampicin","Sulphonamides","Tetracyclines","Trimethoprim")
+
+d$amr = rowSums(d[,antibiotics])
+d = d[is.na(rowSums(d[, antibiotics]))==F,] # ELIMINATE NAs IN ANTIBIOTICS
+
+
+d.m = d[,antibiotics]
+#land<-readOGR(dsn = "http://gegp01.github.io/ServSoc/countries.geojson")
+land<-readOGR(dsn = "~/sandbox/AMR/countries.geojson", verbose = F)
+l2 <- spTransform(land, CRS("+proj=robin +lon_0=0w"))
+l3 <- spTransform(land, CRS("+proj=laea +lat_0=0 +lon_0=0 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs "))
+
+# GRID OF MERIDIANS AND PARALELS
+xx <- c(-180,-150,-120,-90, -60, -30, 0, 30, 60, 90, 120, 150, 180)
+yy <- c(-90,-80,-60,-40,-20, 0, 20,40,60,80, 90)
+prj <- "+proj=robin +lon_0=0w"
+grid_ = graticule(lons = xx, lats = yy, proj = prj)
+
+
+samples = table(d$ISO.3)
+top10 = samples[samples>quantile(na.omit(samples), probs = 1:10/10)[9]]
+
+land@data$sample = samples[land@data$ISO_A3]
+l2@data$samples = as.numeric(samples[l3@data$ISO_A3])
+l2@data$samples = ifelse(is.na(l2@data$samples), 0, l2@data$samples)
+
+
+l3@data$samples = samples[l3@data$ISO_A3]
+
+x.vector = log10(as.numeric(l3@data$samples))
+
+ncolors= 5
+my_palette <- grDevices::colorRampPalette(c("azure", "darkorange"))(ncolors)
+mypal=my_palette[cut(x.vector,ncolors)]
+names(mypal) = names(x.vector)
+###########
+# BARPLOT 
+
+# SPLIT DATA BY COUNTRY
+# Select top 10 countries most sampled
+
+# Select the order of countries given by sample size
+o = sort(top10[2:18], decreasing = T)
+
+D = d[is.na(match(d$ISO.3, names(o)))==F,] # first element in top10 is not valid.
+
+D$mdr = rowSums(D[,antibiotics])>=3
+
+#a.sample = colSums(D[,antibiotics])/nrow(D) # positives /total samples
+d.m = D[,antibiotics]
+
+#########################
+#########################
+# NEW CHUNK
+
+f.by.species = function(x){
+  ISO_3 = D$ISO.3
+  q = D$species
+  y = d.m[, antibiotics[x]]
+  mdr = rowSums(D[, antibiotics])>=3
+  data.frame(ISO_3, species = q, presence = y, marker = antibiotics[x], mdr)
+}
+
+L = do.call(rbind, lapply(c(1:13), f.by.species))
+
+CONT = split.data.frame(L, L$ISO_3)
+CONT = CONT[names(o)] # ORDER LIST BASED ON SAMPLE SIZE
+
+# FUNCTION TO SPLIT DATA WITHIN ISO_3 BY marker (ANTIBIOTIC) 
+
+f.marker = function(x){
+  X = CONT[[x]]
+  positives = X[X$presence==1,]
+  Y = table(positives$marker, positives$mdr)
+  prop_mdr = Y[,2]/(Y[,1]+Y[,2])
+#  data.frame(no_mdr = Y[,1], mdr = Y[,2], prop_mdr )
+  names(prop_mdr) = rownames(Y)
+  prop_mdr*100
+}  
+
+Q.a = lapply(1:length(CONT), f.marker)
+names(Q.a) = names(CONT)
+
+Q = Q.a
+
+m <- rbind(c(1, 2, 3), c(5, 5, 5), c(5,5,5), c(4,6,7))
+
+#print(m)
+layout(m)
+
+par(mai=c(2,0.5,0.5,0.5), font.main = 2, font.axis=3)
+
+b1 = sort(Q[[1]])
+barplot(b1, main = names(Q)[1], las = 2, border=NA, col = "red", ylim = c(0, 100), ylab = "% MDR", axes=F)
+axis(2)
+
+b2 = sort(Q[[2]])
+barplot(b2, main = names(Q)[2], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+b3 = sort(Q[[3]])
+barplot(b3, main = names(Q)[3], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+b4 = sort(Q[[4]])
+barplot(b4, main = names(Q)[4], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F, ylab = "% MDR")
+axis(2)
+
+par(mai=c(0,0,0,0), font.main = 3)
+plot(grid_, add= F, col="darkslategrey")
+plot(l2, col=mypal, main = "", add= T)
+legend("left", cex=1.5, box.lty = "solid", box.col = "white", bg="white", border = "darkslategrey", horiz = F, inset = 0.1, title= expression("sample size log"[10]), legend=round(c(quantile(na.omit(x.vector),probs= (1:5)/5)), 0), fill = my_palette)
+
+
+par(mai=c(2,0.5,0.5,0.5), font.main = 3, font.axis=3)
+b5 = sort(Q[[5]])
+barplot(b5, main = names(Q)[5], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+b6 = sort(Q[[6]])
+barplot(b6, main = names(Q)[6], las = 2, border=NA, col = "red", ylim = c(0, 100), axes=F)
+axis(2)
+
+```
+
+<b>Map 2</b>. Barcharts capture the percentage of samples with MDR by antibiotic class, in the six countries most sampled. Of the isolates resistant to class, what percentage are resistant to 2 or more other class of antibiotic. World map marking sample size for each country. 
+
+</br></br>
+
+```{r map_antibiotic_use_mdr, echo=F, message = F, warning = F, fig.height=15, fig.width=15, fig.align="center"}
+require(rgdal) # important changes by 2023!
+require(raster)
+require(sp)
+require(sf)
+require(graticule)
+
+d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_ISO3_abnamescorrected.csv", sep = ",")
+
+antibiotics = c("Aminoglycosides","Beta.lactams","Polymyxins"
+  ,"Fosfomycin","Glycopeptides","Macrolides","Oxazolidinones","Phenicols"      
+  ,"Quinolones","Rifampicin","Sulphonamides","Tetracyclines","Trimethoprim")
+
+
+d$amr = rowSums(d[,antibiotics])
+
+d.m = d[,antibiotics]
+#land<-readOGR(dsn = "http://gegp01.github.io/ServSoc/countries.geojson")
+land<-readOGR(dsn = "~/sandbox/AMR/countries.geojson", verbose = F)
+l2 <- spTransform(land, CRS("+proj=robin +lon_0=0w"))
+l3 <- spTransform(land, CRS("+proj=laea +lat_0=0 +lon_0=0 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs "))
+
+# GRID OF MERIDIANS AND PARALELS
+xx <- c(-180,-150,-120,-90, -60, -30, 0, 30, 60, 90, 120, 150, 180)
+yy <- c(-90,-80,-60,-40,-20, 0, 20,40,60,80, 90)
+prj <- "+proj=robin +lon_0=0w"
+grid_ = graticule(lons = xx, lats = yy, proj = prj)
+
+# LOAD MAP (SHAPEFILE OF ANTIBIOTICS)
+print("REFERENCE: https://www.science.org/doi/10.1126/science.aao1495; Van Boeckel et al. 2017. SCIENCE")
+
+require(rgdal, quietly=T)
+antibiotic_use = readOGR(dsn = "~/sandbox/AMR/antibiotic_use_animals/", layer = "World")
+
+print("Antibiotic use data matching our data:")
+table(is.na(match(d$ISO.3, antibiotic_use@data$ISO3))==F)
+#table(is.na(match(D$ISO.3, antibiotic_use@data$ISO3)))
+
+f.by.species = function(x){
+  ISO_3 = d$ISO.3
+  q = d$species
+  y = d[, antibiotics[x]]
+  mdr = rowSums(d[, antibiotics])>=3
+  data.frame(ISO_3, species = q, presence = y, marker = antibiotics[x], mdr)
+}
+
+L = do.call(rbind, lapply(c(1:13), f.by.species))
+
+#L # dataframe with mdr by species
+L_ = na.omit(L)
+
+MDR_ISO3 = aggregate(L_$mdr, list(L_$ISO_3), mean)
+MDR_prop = MDR_ISO3[,2]*100
+names(MDR_prop) = MDR_ISO3[,1]
+
+m <- rbind(c(1, 2), c(3, 4))
+layout(m)
+
+par(mai=c(1,1,0.1,0.1))
+
+X = antibiotic_use@data
+
+y_ = MDR_prop
+
+paste(length(y_), "countries")
+# table(L_$ISO_3)
+
+x_ = X$Pop2010
+names(x_) = X$ISO3
+
+# ELIMINATE NAs, i.e.  when x_ = 0s
+
+#x_ = ifelse()
+
+#x = x_[names(y)]
+x = x_
+x = x[x>0]
+y = y_[names(x)]
+
+plot(log10(y+1) ~ log10(x+1), axes = F, xlim = c(4,10), ylim = c(0,2.2)
+     , xlab = expression("Human population in 2010, log"[10]), ylab=expression("% MDR, log"[10])
+     , cex=5, cex.lab=2, pch = 19, col = rgb(0,0.7,0.5,0.3))
+grid(col="royalblue")
+axis(1)
+axis(2)
+text(log10(x+1), log10(y+1), names(x), cex = 0.6, col = "darkslategrey")
+ 
+x_ = X[,"GDP_MD_EST"]
+names(x_) = X$ISO3
+
+x = x_
+x = x[x>0]
+y = y_[names(x)]
+
+plot(log10(y+1)~log10(x), axes=F, xlim = c(2,8), ylim = c(0,2.2)
+     , xlab = expression("GDP, log"[10]), ylab= expression("MDR %, log"[10])
+     , cex= 5, cex.lab=2, pch = 19, col = rgb(0,0.7,0.5,0.3))
+grid(col="royalblue")
+axis(1)
+axis(2)
+text(log10(x+1), log10(y+1), names(x), cex = 0.6, col = "darkslategrey")
+
+# plot(y~x)
+
+x_ = X[,"PgAn"]
+names(x_) = X$ISO3
+#x = x_[names(y)]
+x = x_
+x = x[x>0]
+y = y_[names(x)]
+
+plot(log10(y+1)~log10(x+1), axes = F, xlim = c(4,11), ylim = c(0,2.2)
+     , xlab = expression("Annual tons of antibiotics used in Pigs (PgAn), log"[10]), ylab=expression("% MDR, log"[10])
+     , cex= 5, cex.lab=2, pch = 19, col = rgb(0,0.7,0.5,0.3))
+grid(col="royalblue")
+axis(1)
+axis(2)
+text(log10(x+1), log10(y+1), names(x), cex = 0.6, col = "darkslategrey")
+
+# # OTHER VARIABLES
+x_ = X[,"ChAn"]
+names(x_) = X$ISO3
+#x = x_[names(y)]
+x = x_
+x = x[x>0]
+y = y_[names(x)]
+
+plot(log10(y+1)~log10(x+1), axes=F, xlim = c(0,11), ylim = c(0,2.2)
+     , xlab = expression("Annual tons of antibiotics used in Poultry (ChAn), log"[10]), ylab=expression("% MDR log"[10])
+     , cex= 5, cex.lab=2, pch = 19, col = rgb(0,0.7,0.5,0.3))
+grid(col="royalblue")
+axis(1)
+axis(2)
+text(log10(x+1), log10(y+1), names(x), cex = 0.6, col = "darkslategrey")
+
+``` 
+
+</br></br>
+#### <i> Recursive partitioning </i>
+
+<b>General model</b>
+Countries within the 25 percentile of MDR are compared to the countries with the highest MDR, i.e. above the 75 percentile. The predictors that better split the data into these two classes are selected to build a model with hierarchical structure. The predictors of the class high_mdr are: P Human population, Gross Domestic Product (GDP); and Antibiotic use in poultry(Ch), pigs (Pg), and cattle (Ca). Complexity of the final classification tree minimizes cross validation error.
+
+<div align="center"><i> high_mdr ~ P + G + Pg + Ch + Ca </i></div>
+
+</br> </br>
+```{r rpart, eval = T, echo=F, message = F, warning = F, fig.height=15, fig.width=15, fig.align="center"}
+
+###########################################################
+## RECURSIVE PARTITIONING
+################
+
+# # RESPONSE
+  y = MDR_prop
+# 
+# # PREDICTORS
+  X = antibiotic_use@data
+# 
+# # ANTIBIOTIC USE
+    A_Pg = log10(X$PgAn+1)
+    names(A_Pg) = X$ISO3
+    
+    # # ANTIBIOTIC USE
+    A_Ca = log10(X$CaAn+1)
+    names(A_Ca) = X$ISO3
+    
+    # # ANTIBIOTIC USE
+    A_Ch = log10(X$ChAn+1)
+    names(A_Ch) = X$ISO3
+# 
+    G = log10(X$GDP_MD_EST+1)
+    names(G) = X$ISO3
+
+    # print("GDP")
+    # hist(G)
+ 
+    table(X$GDP_YEAR)
+#   
+# # HUMAN POPULATION
+  P = log10(X$Pop2010)
+  names(P) = X$ISO3
+
+#  dat = data.frame(y, P = P[names(y)], G = G[names(y)], A = A[names(y)], clase, no_clase)
+  dat = data.frame(y, P = P[names(y)], G = G[names(y)], A_Pg = A_Pg[names(y)], A_Ch = A_Ch[names(y)], A_Ca = A_Ca[names(y)])
+
+  dat = na.exclude(dat)
+  
+  dat$clase = ifelse(dat$y >= quantile(dat$y)[4], 1, 0)
+  dat$no_clase = ifelse(dat$y <= quantile(dat$y)[2], 1, 0)  
+  
+  quantile(dat$y)
+  
+  print("countries with high average MDR:")
+  quantile(dat$y)[4]
+  
+  print("countries with low average MDR:")
+  quantile(dat$y)[2]
+
+  d1 = dat[dat$clase==1,]
+  d0 = dat[dat$no_clase==1,]
+
+  Y = rbind(d1,d0)
+  str(Y)
+
+  model = clase ~ P + G + A_Pg + A_Ch + A_Ca
+
+  require(rpart)
+  require(rpart.plot)
+  M = rpart(model, data = Y)
+
+  m = rbind(c(3,3), c(1,2))  
+  layout(m)
+
+  par(mai=c(1,1,0.5,0.5))
+  hist(dat$y, cex.axis=1.3, col = "royalblue", cex.lab = 1.7, main="", xlab="MDR by country", axes=F)
+  axis(1)
+  axis(2)
+#  hist(dat$y, )
+  plotcp(M)
+#  printcp(M)
+
+  pfit<- prune(M, cp= M$cptable[which.min(M$cptable[,"xerror"]),"CP"])
+  rpart.plot(pfit)
+#  dat
+# Random Forest prediction of Kyphosis data
+#library(randomForest)
+#fit <- randomForest(model,   data=Y)
+#print(fit) # view results
+#importance(fit) 
+  
+``` 
+
+
+```{r rpart_spp, eval = F, echo=F, message = F, warning = F, fig.height=15, fig.width=15, fig.align="center"}
+#names(d)
+d$mdr = ifelse(d$amr>=3, 1, 0)
+
+# Split data by species
+S = split.data.frame(d, d$species)
+
+focal.taxa= c("Escherichia coli","Klebsiella pneumoniae","Staphylococcus aureus", "Enterococcus faecium", "Acinetobacter baumannii", "Pseudomonas aeruginosa")
+
+f.mdr = function(x){
+  s = focal.taxa[x]
+  q = aggregate(S[[s]]$mdr, list(S[[s]]$ISO.3), mean)
+  names(q) =  c("ISO_3","mdr")
+  q$taxa = s
+  z = table(S[[s]]$ISO.3)
+  sample.size = as.numeric(z)
+  names(sample.size) = names(z)
+  data.frame(q, sample.size)
+  }
+
+SPP = lapply(1:6, f.mdr)
+names(SPP) = focal.taxa
+
+f.rpart = function(x){
+  
+}
+
+focal.taxa
+
+y = SPP[[1]]
+
+  dat = data.frame(y, P = P[rownames(y)], G = G[rownames(y)], A_Pg = A_Pg[rownames(y)], A_Ch = A_Ch[rownames(y)], A_Ca = A_Ca[rownames(y)])
+
+  dat = na.exclude(dat)
+  
+  dat$clase = ifelse(dat$mdr >= quantile(dat$mdr)[4], 1, 0)
+  dat$no_clase = ifelse(dat$mdr <= quantile(dat$mdr)[2], 1, 0)  
+  
+  quantile(dat$mdr)
+  
+  d1 = dat[dat$clase==1,]
+  d0 = dat[dat$no_clase==1,]
+
+  Y = rbind(d1,d0)
+  str(Y)
+
+  model = clase ~ P + G + A_Pg + A_Ch + A_Ca
+
+  require(rpart)
+  require(rpart.plot)
+  M = rpart(model, data = Y)
+
+  m = rbind(c(3,3), c(1,2))  
+  layout(m)
+
+  hist(dat$mdr)
+  plotcp(M)
+
+  pfit<- prune(M, cp= M$cptable[which.min(M$cptable[,"xerror"]),"CP"])
+  rpart.plot(pfit)
+
+# Random Forest prediction of Kyphosis data
+#library(randomForest)
+#fit <- randomForest(model,   data=Y)
+#print(fit) # view results
+#importance(fit) 
+
+``` 
+
+</br>
+
+#### <i>Phylogenetic Analysis</i>
+
+```{r mcmcglmm, eval = F, echo=F, message = F, warning = F, fig.height=15, fig.width=15, fig.align="center"}
+
+#names(d)
+  d$mdr = ifelse(d$amr>=3, 1, 0)
+
+# Split data by species
+  S = split.data.frame(d, d$species)
+  
+  focal.taxa= c("Escherichia coli","Klebsiella pneumoniae","Staphylococcus aureus", "Enterococcus faecium", "Acinetobacter baumannii", "Pseudomonas aeruginosa")
+
+  focal.taxa = unique(d$species)
+  
+  f.mdr = function(x){
+  s = focal.taxa[x]
+  q = aggregate(S[[s]]$mdr, list(S[[s]]$ISO.3), mean)
+  names(q) =  c("ISO_3","mdr")
+  q$taxa = s
+  z = table(S[[s]]$ISO.3)
+  sample.size = as.numeric(z)
+  names(sample.size) = names(z)
+  d_ = data.frame(q, sample.size)
+  d_[d_$ISO_3!="",]
+  }
+
+  SPP = lapply(1:length(focal.taxa), f.mdr)
+  names(SPP) = focal.taxa
+
+  data.spp = do.call(rbind, SPP)
+  str(data.spp)
+  
+#  print("Bacteria richness by country")  
+#  table(data.spp$ISO_3) # BACTERIA RICHNESS PER COUNTRY
+#  names(data.spp)
+  
+  m = rbind(c(1,2, 2), c(3,2,2))
+  layout(m)
+  
+  # READ PHYLOGENY
+  require(ape)
+  V = read.tree("~/sandbox/AMR/species_level_tree.newick") 
+  nms = unique(data.spp$taxa)
+  nms=gsub(" ", "_", nms)
+  # nms
+  print("Some species are not in the phylogeny")
+  table(is.na(match(nms, V$tip.label)))
+  nms_ = nms[is.na(match(nms, V$tip.label))==F]
+  
+  data.spp.mdr = aggregate(data.spp$mdr, list(data.spp$taxa), mean)[,2]
+  names(data.spp.mdr) = gsub(" ", "_", aggregate(data.spp$mdr, list(data.spp$taxa), mean)[,1])
+#  names(data.spp.mdr)
+        
+  par(mai=c(1,1,0.5,0.5))
+  hist(data.spp$mdr*100, cex.axis=1.3, col = "royalblue", cex.lab = 1.7, main="", xlab="species MDR by country", axes=F)
+  axis(1)
+  axis(2)
+
+  phy = keep.tip(V, nms_)
+
+  x.vector = data.spp.mdr#[phy$tip.label]
+  ncolors= 5
+  my_palette <- grDevices::colorRampPalette(c("lightblue", "red"))(ncolors)
+  mypal=my_palette[cut(x.vector,ncolors)]
+  names(mypal) = names(x.vector)
+  
+  par(mai=c(0,0,0,0))
+  plot(phy, type="f", cex = 0.7, col="darkslategrey", tip.color=mypal)
+
+#  hist(data.spp$sample_size)
+  par(mai=c(1,1,0.5,0.5))
+  plot(data.spp$mdr*100~log10(data.spp$sample.size+1)
+       , cex = 1.3, cex.lab = 1.7, main= "", xlab = expression("sample.size, log"[10]), ylab= "species MDR by country", axes= F)
+  axis(1)
+  axis(2)
+
+#######################################
+#######################################  
+########## MCMCglmm
+# https://stackoverflow.com/questions/40617099/mcmcglmm-binomial-model-prior
+
+set.seed(123)
+nj <- 15 # number of individuals per cluster
+J <- 30  # number of clusters
+n <- nj * J
+x <- rnorm(n)
+y <- rbinom(n, 1, prob = 0.6)
+cluster <- factor(rep(1:nj, each = J))
+
+dat <- data.frame(y = y, x = x, cluster = cluster)
+  
+  
+library("MCMCglmm") # for MCMCglmm()    
+set.seed(123) 
+
+prior0 <- list(G = list(G1 = list(V = diag(2), nu = 0.002)),
+               R = list(V = 0.5, nu = 0.002, fix = FALSE))
+
+mod0 <- MCMCglmm(fixed = y ~ 1 + x, 
+            random =  ~ us(1 + x):cluster, 
+            data = dat,
+            family = "categorical",
+            prior = prior0) 
+
+# The draws from the Gibbs-sampler for the fixed effects are found in mod0$Sol, the draws for the variance parameters in mod0$VCV. Normally a binomial model requires the residual variance to be fixed, so we set the residual variance to be fixed at 0.5
+# 
+# set.seed(123)
+# 
+# prior1 <- list(G = list(G1 = list(V = diag(2), nu = 0.002)),
+#           R = list(V = 0.5, nu = 0.002, fix = TRUE))
+# 
+# mod1 <- MCMCglmm(fixed = y ~ 1 + x, 
+#             random =  ~ us(1 + x):cluster, 
+#             data = dat,
+#             family = "categorical",
+#             prior = prior1) 
+# 
+# CALL PHYLOGENY AT SPECIES LEVEL
+# MODEL: mdr ~ P + G + A_Pg + A_Ca + A_Ch
+# prior.binary 
+# prior1<-list(R=list(V=diag(1),nu=0.002),G=list(G1=list(V=diag(1), nu=0.002)))
+# 
+# model.1<-MCMCglmm(Ybrain ~ Ybody+polyg:fem -1, random=~animal, pedigree=phylo, family=rep("gaussian",1), prior=prior1, nitt = 120000000, thin = 30000, burnin = 1000000) 
+# 
+# prior2<-list(R=list(V=matrix(c(1, 0.5, 0.5, 1), nrow=2, ncol=2), nu=0.002),
+# 	G=list(G1=list(V=matrix(c(1, 0.5, 0.5, 1), nrow=2, ncol=2), nu=0.002)))
+# 
+# model.2<-MCMCglmm(cbind(brain, body) ~ trait:mating:sex -1, rcov=~us(trait):units, random=~us(trait):animal, pedigree=phylo, family=rep("gaussian",2), prior=prior.2,nitt = 120000000, thin = 30000, burnin = 1000000)	
+
+``` 
+
+
+#### <i> AMR across time </i>
+
+```{r fig4, eval = T, echo=T, message = F, warning = F, fig.height=15, fig.width=15, fig.align="center"}
+
+# setwd(path)
+#d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_corrected.csv", sep = ";")
+# d = read.csv("~/sandbox/AMR/Global_AMR_enriched_FINAL_ISO3_abnamescorrected.csv", sep = ",")
+# d.back = d
+# 
+# #names(d)[names(d)=="Betalactamics"]<-"Betalactans"
+# #names(d)[names(d)=="Sulfonamides"]<-"Sulphonamides"
+# 
+# 
+# #d = d[is.na(d$year)==F,] # Eliminate data without year
+# 
+# antibiotics = c("Aminoglycosides","Beta.lactams","Polymyxins"
+#   ,"Fosfomycin","Glycopeptides","Macrolides","Oxazolidinones","Phenicols"      
+#   ,"Quinolones","Rifampicin","Sulphonamides","Tetracyclines","Trimethoprim")
+# 
+# d$amr = rowSums(d[,antibiotics])
+# d = d[is.na(rowSums(d[, antibiotics]))==F,] # ELIMINATE NAs IN ANTIBIOTICS
+#dim(d)
+print("Data without year")
+table(is.na((d$year)))
+
+d.year = d[is.na(d$year)==F,]
+
+# str(d.year)
+# 
+# plot(d.year$amr~d.year$year)
+# lines(d.year$amr~d.year$year)
+# 
+# amr.mean.year = aggregate(d.year$amr, list(d.year$year), mean)
+# 
+# amy = amr.mean.year[,2]
+# names(amy) = amr.mean.year[,1]
+# 
+# plot(amy~as.numeric(names(amy)))
+
+m = rbind(c(1,1))#, c(2,2))
+layout(m)
+
+dq = d.year
+#########################################3
+par(mai = c(2,2,0.5,0.5), cex= 1, lwd=1.2, bg = "black", col.axis = "azure", col.lab="azure", col = "azure")
+plot(dq$amr~dq$year, col = "darkslategrey", axes = F, pch= 1, ylab = "AMR", xlab = "year", cex = 0.7)
+
+# MAX AMR
+values = aggregate(dq$amr,list(dq$year), max)
+#points(values[,2]~values[,1], col = "red", pch=1, cex = 1)
+mod = glm(values[,2]~values[,1], family = "poisson")
+xmod = aggregate(dq$amr,list(dq$year), max)[,1]
+ymod <- predict(mod, list(wt = xmod),type="response")
+lines(ymod~xmod, col = "red", lty = "dashed")
+
+# MEAN AMR
+values = aggregate(dq$amr,list(dq$year), mean)
+points(values[,2]~values[,1], col = "blue", pch=1, cex = 1)
+
+mod = glm(values[,2]~values[,1], family = "poisson")
+xmod = aggregate(dq$amr,list(dq$year), max)[,1]
+ymod <- predict(mod, list(wt = xmod),type="response")
+lines(ymod~xmod, col = "blue", lty = "dashed")
+
+
+# lines by speciies
+#table(dq$species)
+
+dq.spp = split.data.frame(dq, dq$species)
+
+# MEAN AMR
+
+focal.taxa= c("Escherichia coli","Klebsiella pneumoniae","Staphylococcus aureus", "Enterococcus faecium", "Acinetobacter baumannii", "Pseudomonas aeruginosa")
+
+# TAXA 1
+ix = dq.spp[[focal.taxa[1]]]
+            
+values = aggregate(ix$amr,list(ix$year), mean)
+points(values[,2]~values[,1], col = "orange3", pch=1, cex = 1)
+
+mod = glm(values[,2]~values[,1], family = "poisson")
+xmod = aggregate(ix$amr,list(ix$year), max)[,1]
+ymod <- predict(mod, list(wt = xmod),type="response")
+lines(ymod~xmod, col = "orange3", lty = "dashed")
+
+# TAXA 2
+ix = dq.spp[[focal.taxa[2]]]
+            
+values = aggregate(ix$amr,list(ix$year), mean)
+points(values[,2]~values[,1], col = "green", pch=1, cex = 1)
+
+mod = glm(values[,2]~values[,1], family = "poisson")
+xmod = aggregate(ix$amr,list(ix$year), max)[,1]
+ymod <- predict(mod, list(wt = xmod),type="response")
+lines(ymod~xmod, col = "green", lty = "dashed")
+
+# TAXA 3
+ix = dq.spp[[focal.taxa[3]]]
+            
+values = aggregate(ix$amr,list(ix$year), mean)
+points(values[,2]~values[,1], col = "purple", pch=1, cex = 1)
+
+mod = glm(values[,2]~values[,1], family = "poisson")
+xmod = aggregate(ix$amr,list(ix$year), max)[,1]
+ymod <- predict(mod, list(wt = xmod),type="response")
+lines(ymod~xmod, col = "purple", lty = "dashed")
+
+# TAXA 4
+ix = dq.spp[[focal.taxa[4]]]
+            
+values = aggregate(ix$amr,list(ix$year), mean)
+points(values[,2]~values[,1], col = "coral", pch=1, cex = 1)
+
+mod = glm(values[,2]~values[,1], family = "poisson")
+xmod = aggregate(ix$amr,list(ix$year), max)[,1]
+ymod <- predict(mod, list(wt = xmod),type="response")
+lines(ymod~xmod, col = "coral", lty = "dashed")
+
+
+# TAXA 6
+ix = dq.spp[[focal.taxa[6]]]
+            
+values = aggregate(ix$amr,list(ix$year), mean)
+points(values[,2]~values[,1], col = "cyan", pch=1, cex = 1)
+
+mod = glm(values[,2]~values[,1], family = "poisson")
+xmod = aggregate(ix$amr,list(ix$year), max)[,1]
+ymod <- predict(mod, list(wt = xmod),type="response")
+lines(ymod~xmod, col = "cyan", lty = "dashed")
+
+axis(1, col = "azure")
+axis(2, col = "azure")
+
+legend("topleft", inset = 0.1, box.lwd=0, legend = c("all data", "maximum", "mean", focal.taxa[1], focal.taxa[2], focal.taxa[3], focal.taxa[4],focal.taxa[6]), pch=1, col=c("grey", "red", "blue", "orange3", "green", "purple", "coral","cyan"), text.col="azure")
+
+
+print("Number of species in dataset"); length(names(dq.spp))
+
+
+```
+
+
+
+
