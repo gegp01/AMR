@@ -76,5 +76,59 @@ D$continent[grep("Burkina Faso", D$country)]<-"Africa"
  AND THE WHOLE matrix {0,1}
 
 #### Covariance model MCMCglmm
+Monte Carlo Simulations require RAM, hence analysis of large dataset may crash the computer.
+A work around could be to analyse part of the data to train a model; and then the model can be validated by testing its predictions on the other part of the dataset.
 
+##### Select a random sample of the dataet to train a model.
+~~~~
+set.seed(193839)
+s = as.integer(nrow(D)*0.5)
+D.sub.tr = D[sample(1:nrow(D), s),]
+
+set.seed(193839)
+D_n0 = D[rowSums(D[,antibiotics])!=0,]
+s = as.integer(nrow(D_n0)*0.5)
+D.sub.tr.n0 = D_n0[sample(1:nrow(D_n0), s),]
+
+~~~~
+
+##### Run de model
+May take some time...
+
+~~~
+#LIBRARY
+require(MCMCglmm)
+
+# PRIORS
+# For one factor
+usP_1<-list(V = diag(13), nu = 2)
+
+# For two factors
+usP_2<-list(V = diag(13)/5, nu = 2)
+
+# For three factors
+usP<-list(V = diag(13)/3, nu = 2)
+idhP<-list(V = diag(13)*2/3, nu = 2)
+
+priorX4 <- list(R = usP, G = list(G1 = usP))
+
+# RUN THE MODEL: CATEGORICAL MULTIVARIATE RESPONSE WITH A COVARIATE MATRIX OF ANTIBIOTICS
+modelX4 <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
+                         ,Glycopeptides,Macrolides,Oxazolidinones,Phenicols
+                         ,Quinolones,Rifampicin,Sulphonamides
+                         ,Tetracyclines,Trimethoprim) ~ 1 #+ country - 1
+                   , family=rep("categorical", 13)
+#                   ,random = ~ us(trait):taxa # + us(trait):country
+                   ,rcov = ~ us(trait):units
+#                   , prior=prior1_1
+                  , data= D.sub.tr.n0)
+~~~
+
+##### Call the covariance matrix and plot the bipartite network.
+
+~~~
+modelX4$VCV
+
+plot(network)
+~~~
 
