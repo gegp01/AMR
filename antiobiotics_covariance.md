@@ -94,7 +94,7 @@ D.sub.tr.n0 = D_n0[sample(1:nrow(D_n0), s),]
 ~~~~
 
 
-#### Set priors
+##### Set priors
 As prior belief for the correlations among resistance to antibiotic families, we can use a matrix of 13 x 13 with an expected self-correlation of 1, and no correlation between the resistance to different antibiotic families. In other words, the elements in the diagonal of the matrix are 1, and the elements off-diagonal are 0. 
 
 This prior will be tested against the data; and we can modifify the prior values of self-correlation as in the following examples.
