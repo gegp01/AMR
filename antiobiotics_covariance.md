@@ -92,36 +92,45 @@ D.sub.tr.n0 = D_n0[sample(1:nrow(D_n0), s),]
 
 ~~~~
 
-##### Run de model
-May take some time...
+
+#### Set priors
+As prior belief for the correlations among resistance to antibiotic families, we can 
+use a matrix V of 13 x 13 with an expected self-correlation of 1, and no correlation between resistance to different antibiotic families. In other words, the elements in the diagonal of the matrix V are 1, and the elements off-diagonal are 0.
+
+This priors will be challenged against our hypothesis and data.
 
 ~~~
-#LIBRARY
-require(MCMCglmm)
-
-# PRIORS
 # For one factor
 usP_1<-list(V = diag(13), nu = 2)
 
-# For two factors
+# For two factors we can split the variance 
 usP_2<-list(V = diag(13)/5, nu = 2)
 
 # For three factors
 usP<-list(V = diag(13)/3, nu = 2)
 idhP<-list(V = diag(13)*2/3, nu = 2)
 
-priorX4 <- list(R = usP, G = list(G1 = usP))
+~~~
+##### Run de model
+May take some time...
+~~~
+#LIBRARY
+require(MCMCglmm)
+
+# PRIOR
+priorX <- list(R = identity, G = list(G1 = identity, G2 = identity))
 
 # RUN THE MODEL: CATEGORICAL MULTIVARIATE RESPONSE WITH A COVARIATE MATRIX OF ANTIBIOTICS
-modelX4 <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
+
+modelX_rnd <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
                          ,Glycopeptides,Macrolides,Oxazolidinones,Phenicols
                          ,Quinolones,Rifampicin,Sulphonamides
                          ,Tetracyclines,Trimethoprim) ~ 1 #+ country - 1
-                   , family=rep("categorical", 13)
-#                   ,random = ~ us(trait):taxa # + us(trait):country
-                   ,rcov = ~ us(trait):units
-#                   , prior=prior1_1
-                  , data= D.sub.tr.n0)
+                        , family=rep("categorical", 13)
+                   , random = ~ us(trait):taxa + us(trait):country
+                   , rcov = ~ us(trait):units
+                   , prior=priorX
+                   , data= D.sub.tr.n0)
 ~~~
 
 ##### Call the covariance matrix and plot the bipartite network.
