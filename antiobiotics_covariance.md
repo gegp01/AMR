@@ -122,7 +122,7 @@ prior1 <- list(R = identity)
 
 # RUN THE MODEL: MULTIVARIATE CATEGORICAL RESPONSE WITH A COVARIATE MATRIX OF ANTIBIOTICS
 
-require(MCMCglmm)
+set.seed() = NULL
 modelX_corg <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
                             ,Glycopeptides,Macrolides,Oxazolidinones,Phenicols
                             ,Quinolones,Rifampicin,Sulphonamides
