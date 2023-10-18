@@ -137,8 +137,40 @@ modelX_corg <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
 ##### Call the correlation matrix and plot the bipartite network.
 
 ~~~
-modelX4$VCV
+# LIBRARY
+require(igraph)
 
-plot(network)
+# ASSIGN MODEL
+model = modelX_corg
+Z = summary(model)$Rcovariances
+
+vertex = rownames(Z)
+vertex = gsub("trait", "", vertex)
+vertex = gsub(".1", "", vertex)
+vertex = gsub(".1.units", "", vertex)
+vertex = gsub(".units", "", vertex)
+
+v = as.data.frame(do.call(rbind, strsplit(vertex, ":")))
+v$weight = data.frame(Z)$post.mean
+v$weight[v$weight<0]<-0
+v2 = v[v[,1]!=v[,2],]
+
+g <- graph_from_data_frame(v2, directed = F)
+is_weighted(g)
+
+l_col = "darkslategrey"
+e_col = rgb(0.1,0,0.5, 0.1)
+v_col = rgb(0,0.5,0.9, 0.3)
+border_col = "royalblue"
+v.size=47
+
+par(bg="white", las = 2, mai = c(0,0,0,0), font.lab=2)
+
+plot(g, vertex.color = v_col, vertex.frame.color= border_col, edge.width=E(g)$weight
+#     , layout = layout.fruchterman.reingold
+     , layout = layout.circle, edge.curved = F, vertex.shape = "rectangle"
+     , vertex.label.color = l_col, edge.color = e_col, vertex.size=v.size
+     , vertex.label.cex = 0.9)
+
 ~~~
 
