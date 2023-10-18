@@ -75,11 +75,13 @@ D$continent[grep("Burkina Faso", D$country)]<-"Africa"
  AMR
  AND THE WHOLE matrix {0,1}
 
-#### Covariance model MCMCglmm
-Monte Carlo Simulations require RAM, hence analysis of large dataset may crash the computer.
-A work around could be to analyse part of the data to train a model; and then the model can be validated by testing its predictions on the other part of the dataset.
+#### Model MCMCglmm on the correlations between resistance to antibiotic families.
+The model tested here will estimate the posterior of the correlations between resistance to one of the 13 antibiotic families and resistance to any of the other antibiotic families. 
+
 
 ##### Select a random sample of the dataet to train a model.
+Monte Carlo Simulations require RAM, hence analysis of large dataset may crash the computer. A work around could be to analyse part of the data to train a model; and then the model can be validated by testing its predictions on the other part of the dataset.
+
 ~~~~
 set.seed(193839)
 s = as.integer(nrow(D)*0.5)
@@ -94,21 +96,20 @@ D.sub.tr.n0 = D_n0[sample(1:nrow(D_n0), s),]
 
 
 #### Set priors
-As prior belief for the correlations among resistance to antibiotic families, we can 
-use a matrix V of 13 x 13 with an expected self-correlation of 1, and no correlation between resistance to different antibiotic families. In other words, the elements in the diagonal of the matrix V are 1, and the elements off-diagonal are 0.
+As prior belief for the correlations among resistance to antibiotic families, we can use a matrix of 13 x 13 with an expected self-correlation of 1, and no correlation between the resistance to different antibiotic families. In other words, the elements in the diagonal of the matrix are 1, and the elements off-diagonal are 0. 
 
-This priors will be challenged against our hypothesis and data.
+This prior will be tested against the data; and we can modifify the prior values of self-correlation as in the following examples.
+Furthermore, we could change the elements of diagonal if there is some hypothesis about it.
 
 ~~~
-# For one factor
-usP_1<-list(V = diag(13), nu = 2)
+# Prior matrix considering self-correlation of 1.
+identity<-list(V = diag(13), nu = 2)
 
-# For two factors we can split the variance 
-usP_2<-list(V = diag(13)/5, nu = 2)
+# Prior matrix considering self-correlation of 0.33.
+var_33<-list(V = diag(13)/3, nu = 2)
 
-# For three factors
-usP<-list(V = diag(13)/3, nu = 2)
-idhP<-list(V = diag(13)*2/3, nu = 2)
+# Prior matrix considering self-correlation of 0.66.
+var_66<-list(V = diag(13)*2/3, nu = 2)
 
 ~~~
 ##### Run de model
