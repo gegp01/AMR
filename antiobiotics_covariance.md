@@ -76,8 +76,7 @@ D$continent[grep("Burkina Faso", D$country)]<-"Africa"
  AND THE WHOLE matrix {0,1}
 
 #### Model MCMCglmm on the correlations between resistance to antibiotic families.
-The model tested here will estimate the posterior of the correlations between resistance to one of the 13 antibiotic families and resistance to any of the other antibiotic families. 
-
+The model presented here aims at capturing the posterior of the correlations between resistance to one of the 13 antibiotic families and resistance to any of the other antibiotic families. 
 
 ##### Select a random sample of the dataet to train a model.
 Monte Carlo Simulations require RAM, hence analysis of large dataset may crash the computer. A work around could be to analyse part of the data to train a model; and then the model can be validated by testing its predictions on the other part of the dataset.
@@ -118,23 +117,24 @@ May take some time...
 #LIBRARY
 require(MCMCglmm)
 
-# PRIOR
-priorX <- list(R = identity, G = list(G1 = identity, G2 = identity))
+# SET PRIOR FOR THE CORRELATION MATRIX (rcov = corg(traits):units)
+prior1 <- list(R = identity)
 
-# RUN THE MODEL: CATEGORICAL MULTIVARIATE RESPONSE WITH A COVARIATE MATRIX OF ANTIBIOTICS
+# RUN THE MODEL: MULTIVARIATE CATEGORICAL RESPONSE WITH A COVARIATE MATRIX OF ANTIBIOTICS
 
-modelX_rnd <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
-                         ,Glycopeptides,Macrolides,Oxazolidinones,Phenicols
-                         ,Quinolones,Rifampicin,Sulphonamides
-                         ,Tetracyclines,Trimethoprim) ~ 1 #+ country - 1
-                        , family=rep("categorical", 13)
-                   , random = ~ us(trait):taxa + us(trait):country
-                   , rcov = ~ us(trait):units
-                   , prior=priorX
-                   , data= D.sub.tr.n0)
+require(MCMCglmm)
+modelX_corg <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
+                            ,Glycopeptides,Macrolides,Oxazolidinones,Phenicols
+                            ,Quinolones,Rifampicin,Sulphonamides
+                            ,Tetracyclines,Trimethoprim) ~ 1 #+ country - 1
+                      , family=rep("categorical", 13)
+                      , rcov = ~ corg(trait):units # FIXING THE COVARIANCE MATRIX TO BE A CORRELATION MATRIX
+                      , prior=prior1
+                      , data= D.sub.tr.n0)
+
 ~~~
 
-##### Call the covariance matrix and plot the bipartite network.
+##### Call the correlation matrix and plot the bipartite network.
 
 ~~~
 modelX4$VCV
