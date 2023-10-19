@@ -140,9 +140,8 @@ modelX_corg <-MCMCglmm(cbind(Aminoglycosides,Beta.lactams,Polymyxins,Fosfomycin
 # LIBRARY
 require(igraph)
 
-# ASSIGN MODEL
-model = modelX_corg
-Z = summary(model)$Rcovariances
+modelX = readRDS("~/model_intercept_20percent_no_random_corg.rds")
+Z = summary(modelX)$Rcovariances
 
 vertex = rownames(Z)
 vertex = gsub("trait", "", vertex)
@@ -152,25 +151,53 @@ vertex = gsub(".units", "", vertex)
 
 v = as.data.frame(do.call(rbind, strsplit(vertex, ":")))
 v$weight = data.frame(Z)$post.mean
-v$weight[v$weight<0]<-0
-v2 = v[v[,1]!=v[,2],]
+v2 = v[v[,1]!=v[,2],] # off-diagonal elements
 
 g <- graph_from_data_frame(v2, directed = F)
-is_weighted(g)
 
 l_col = "darkslategrey"
-e_col = rgb(0.1,0,0.5, 0.1)
 v_col = rgb(0,0.5,0.9, 0.3)
 border_col = "royalblue"
-v.size=47
+v.size=5
+
+# Generate a color palette
+mypal <- colorRampPalette(c('darkblue', "lightgrey",  'coral'))
+e_col <- mypal(10)[as.numeric(cut(v$weight,breaks = 10))]
+
 
 par(bg="white", las = 2, mai = c(0,0,0,0), font.lab=2)
-
-plot(g, vertex.color = v_col, vertex.frame.color= border_col, edge.width=E(g)$weight
-#     , layout = layout.fruchterman.reingold
-     , layout = layout.circle, edge.curved = F, vertex.shape = "rectangle"
+plot(g, vertex.color = v_col, vertex.frame.color= border_col, edge.width=E(g)$weight+1
+     , layout = layout.circle, edge.curved = T, vertex.shape = "circle"
      , vertex.label.color = l_col, edge.color = e_col, vertex.size=v.size
-     , vertex.label.cex = 0.9)
+     , vertex.label.cex = 0.9
+      , vertex.label.dist=2.5, vertex.label.degree = 0.3
+)
+
+legend("bottomleft", c("positive", "weak (~ 0)", "negative"), title="correlation"
+       , lty = "solid", col = c("coral", "lightgrey", "royalblue"), box.lwd = 0)
 
 ~~~
+To have a general view on the correlations for each resistance to a specific antiiotic can plot the correlation coefficient for each link.
+
+~~~
+
+f.hist = function(x){
+  png(paste(path2output, antibiotics[x], ".png", sep =""))
+  hist(v2[c(grep(antibiotics[x], v2[,1]), grep(antibiotics[x], v2[,2])),3], font.main = 3
+       , main = antibiotics[x], ylab= "links in the network", xlab = "correlation parameter"
+       , col = "coral", border="transparent")
+  dev.off()
+  }
+
+antibiotics = c("Aminoglycosides","Beta.lactams","Polymyxins"
+                ,"Fosfomycin","Glycopeptides","Macrolides","Oxazolidinones","Phenicols"      
+                ,"Quinolones","Rifampicin","Sulphonamides","Tetracyclines","Trimethoprim")
+
+path2output = "PATH TO SAVE THE FILES"
+lapply(1:13, f.hist)
+~~~
+
+<img "">
+
+
 
